@@ -26,5 +26,7 @@ else
   sleep 5
 fi
 
+source ~/.bash_profile
+
 echo "> $APPLICATION_JAR 배포"
 nohup java -jar $APPLICATION_JAR > /dev/null 2> /dev/null < /dev/null &
