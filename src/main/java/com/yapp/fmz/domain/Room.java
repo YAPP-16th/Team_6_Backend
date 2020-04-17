@@ -1,8 +1,13 @@
 package com.yapp.fmz.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "room")
 public class Room {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,9 +20,8 @@ public class Room {
     // 기초구역번호(우편번호)
     private Long zipcode;
 
-    // 매물 주소
-    @Embedded
-    private Address address;
+     //매물 주소
+    private String address;
 
     // 매물 좌표
     @Embedded
@@ -34,6 +38,8 @@ public class Room {
 
     // 월세, 전세일 경우 0
     private Long monthlyPayment;
+
+    private Long registerId;
 
     // zone이 모두 db에 쌓이면 우편번호별로 매물을 미리 넣어놓기 위한 변수
     // 크롤링할때는 신경 안쓰셔도 됩니다.
