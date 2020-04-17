@@ -6,8 +6,6 @@ import com.yapp.fmz.domain.Search;
 import com.yapp.fmz.domain.Zone;
 import com.yapp.fmz.domain.vo.LocationVo;
 import com.yapp.fmz.service.ZoneService;
-import kr.hyosang.coordinate.CoordPoint;
-import kr.hyosang.coordinate.TransCoord;
 import org.omg.PortableServer.ServantActivatorHelper;
 import org.osgeo.proj4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
