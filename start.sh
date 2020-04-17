@@ -28,6 +28,3 @@ fi
 
 echo "> $APPLICATION_JAR 배포"
 nohup java -jar $APPLICATION_JAR > /dev/null 2> /dev/null < /dev/null &
-
-echo "> 현재 실행중인 애플리케이션 pid 확인"
-CURRENT_PID=$(pgrep -f $APPLICATION_JAR_NAME)
