@@ -1,5 +1,6 @@
 package com.yapp.fmz.utils;
 
+import com.yapp.fmz.domain.Location;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -17,16 +18,12 @@ import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 
 @Component
-public class ConvertAddressLocation {
+public class KakaoApi {
+    private String auth =  System.getenv("KAKAO_API_KEY");
 
-//    @Value("${KAKAO_API_KEY}")
-    private String auth;
-
-    private final String apiUrl = "https://dapi.kakao.com/v2/local/search/address.json";
-
-    public HashMap<String, String> convert(String address){
+    public HashMap<String, String> convertAddressToLocation(String address){
         try{
-            auth = System.getenv("KAKAO_API_KEY");
+            String apiUrl = "https://dapi.kakao.com/v2/local/search/address.json";
 
             RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
             RestTemplate restTemplate = restTemplateBuilder.build();
@@ -53,6 +50,39 @@ public class ConvertAddressLocation {
             re.put("x", x);
             re.put("y", y);
             return re;
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public String convertLocationToAddress(Location location){
+        try{
+            String apiUrl = "https://dapi.kakao.com/v2/local/geo/coord2address";
+
+            RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
+            RestTemplate restTemplate = restTemplateBuilder.build();
+
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl)
+                    .queryParam("x", location.getLat())
+                    .queryParam("y", location.getLng());
+
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+            httpHeaders.set(HttpHeaders.AUTHORIZATION, auth);
+
+            HttpEntity<?> httpEntity = new HttpEntity<>(httpHeaders);
+            ResponseEntity<String> resultMap =restTemplate.exchange(builder.build(true).toUri(), HttpMethod.GET, httpEntity, String.class);
+
+            JSONParser jsonParser = new JSONParser();
+            JSONObject result = (JSONObject)jsonParser.parse(resultMap.getBody().toString());
+            JSONArray documents = (JSONArray)result.get("documents");
+            JSONObject roadAddress = (JSONObject) documents.get(0);
+
+            String address = (String)roadAddress.get("address_name");
+            return address;
         }
         catch(Exception e){
             e.printStackTrace();
