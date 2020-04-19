@@ -2,6 +2,7 @@ package com.yapp.fmz.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@ToString(exclude = "rooms")
 @Table(name = "zone")
 public class Zone {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +25,8 @@ public class Zone {
 
     @Embedded
     private Location location;
+
+    private String polygon;
 
     @OneToMany(mappedBy = "zone")
     private List<Room> rooms = new ArrayList<>();

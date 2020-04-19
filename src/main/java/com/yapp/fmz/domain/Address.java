@@ -7,7 +7,7 @@ import javax.persistence.Embeddable;
 @Embeddable
 @Getter
 public class Address {
-    private String full;
+    private String address;
     private String sido;
     private String sigungu;
     private String dong;

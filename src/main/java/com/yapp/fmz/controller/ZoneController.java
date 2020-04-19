@@ -4,6 +4,7 @@ import com.yapp.fmz.domain.Address;
 import com.yapp.fmz.domain.Location;
 import com.yapp.fmz.domain.Search;
 import com.yapp.fmz.domain.Zone;
+import com.yapp.fmz.domain.dto.ZoneDto;
 import com.yapp.fmz.domain.vo.LocationVo;
 import com.yapp.fmz.service.ZoneService;
 import org.omg.PortableServer.ServantActivatorHelper;
@@ -15,6 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.beans.beancontext.BeanContextChild;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @RestController
 public class ZoneController {
@@ -24,48 +30,21 @@ public class ZoneController {
     @GetMapping("/init")
     public String test(){
         zoneService.initialData();
-        return "dd";
-    }
-
-    @GetMapping("/")
-    public String testRecommendZone(){
-        long start = System.currentTimeMillis();
-
-//        String tempAddress = "서울특별시 강남구 역삼동 테헤란로48길 10";
-        String tempAddress = "경기도 용인시 수지구 포은대로 313번길 7-10";
-        String tag = "회사";
-        String transportation = "버스";
-        Long transferLimit = 1L;
-        Long minTime = 40L;
-        Long maxTime = 50L;
-
-        ArrayList<Zone> zones = zoneService.findZones(tempAddress, tag, transportation, transferLimit, minTime, maxTime);
-
-        System.out.println("전체 검색 시간: " + (System.currentTimeMillis() - start)/1000 + "초");
-
-        String data = "";
-        for (Zone zone :
-                zones) {
-            data += zone.getZipcode();
-            data += ",";
-        }
-
-        return data;
+        return "DB INITIALIZED SUCCESS";
     }
 
     @GetMapping("/zones")
-    public String recommendZone(@RequestParam("address") String address,
-                                @RequestParam("addressTag") String tag,
-                                @RequestParam("transportation") String transportation,
-                                @RequestParam("transferLimit") Long transferLimit,
-                                @RequestParam("minTime") Long minTime,
-                                @RequestParam("maxTime") Long maxTime){
+    public List<ZoneDto> recommendZone(@RequestParam("address") String address,
+                                       @RequestParam("addressTag") String tag,
+                                       @RequestParam("travelMode") List<String> travelMode,
+                                       @RequestParam("transferLimit") Long transferLimit,
+                                       @RequestParam("minTime") Long minTime,
+                                       @RequestParam("maxTime") Long maxTime){
 
-        String tempAddress = "서울특별시 강남구 역삼동 테헤란로48길 10";
-        ArrayList<Zone> zones = zoneService.findZones(tempAddress, tag, transportation, transferLimit, minTime, maxTime);
+        List<Zone> zones = zoneService.findZones(address, tag, travelMode, transferLimit, minTime, maxTime);
 
-        String data = "";
-
-        return data;
+        return zones.stream()
+                .map(ZoneDto::new)
+                .collect(Collectors.toList());
     }
 }
