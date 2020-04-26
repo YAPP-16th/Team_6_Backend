@@ -91,7 +91,7 @@ public class ZoneService {
 
 //         매물이 있는 기초구역만 필터링
         long dbStart = System.currentTimeMillis();
-        List<Zone> all = zoneRepository.findZonesHasRoomV2();
+        List<Zone> all = zoneRepository.findZonesHasRoomV3();
         System.out.println("매물 있는 기초구역 DB 수행시간: " + (System.currentTimeMillis() - dbStart) / 1000 + "초");
         System.out.println("전체 리스트: " + all.size());
 
@@ -173,6 +173,16 @@ public class ZoneService {
         return finalRecommendLocationList;
     }
 
+    public List<Zone> findTestZones(){
+        List<Zone> testZonesHasRoom = zoneRepository.findTestZonesHasRoom();
+        for (Zone zone :
+                testZonesHasRoom) {
+            System.out.println(zone.getId());
+            zone.setTime(34L);
+        }
+        return testZonesHasRoom;
+    }
+
     public List<Zone> findOnlyRecommendZones(String address, String tag, List<String> transitMode, Long transferLimit, Long minTime, Long maxTime) {
 //         주소->좌표 변환
         HashMap<String, String> location = kakaoAPI.convertAddressToLocation(address);
@@ -187,7 +197,7 @@ public class ZoneService {
 
 //         매물이 있는 기초구역만 필터링
         long dbStart = System.currentTimeMillis();
-        List<Zone> all = zoneRepository.findZonesHasRoomV2();
+        List<Zone> all = zoneRepository.findZonesHasRoomV3();
         System.out.println("전체 리스트: " + all.size());
         System.out.println("매물 있는 기초구역 DB 수행시간: " + (System.currentTimeMillis() - dbStart) / 1000 + "초");
 

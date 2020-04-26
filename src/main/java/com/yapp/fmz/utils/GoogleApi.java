@@ -136,7 +136,8 @@ public class GoogleApi {
                     .queryParam("origin", URLEncoder.encode(recommendString))
                     .queryParam("destination", inputLocation.getY().toString() + ',' + inputLocation.getX().toString())
                     .queryParam("mode", "transit")
-                    .queryParam("transit_mode", makeModeParameter(transitMode))
+                    .queryParam("transit_mode", URLEncoder.encode(makeModeParameter(transitMode)))
+                    .queryParam("transit_routing_preference", "fewer_transfers")
                     .queryParam("alternatives", "true")
                     .queryParam("language", "ko")
                     .queryParam("key", auth);
@@ -161,7 +162,13 @@ public class GoogleApi {
 
                 JSONObject legObject = (JSONObject) legs.get(0);
                 JSONObject duration = (JSONObject) legObject.get("duration");
-                Long duration_value = (Long) duration.get("value") / 60;
+                Long duration_value;
+                if(duration == null){
+//                    System.out.println(resultMap.getBody().toString());
+                    continue;
+                }else{
+                    duration_value = (Long) duration.get("value") / 60;
+                }
                 JSONArray steps = (JSONArray) legObject.get("steps");
 
                 JSONObject stepFirstObject = (JSONObject)steps.get(0);
