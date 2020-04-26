@@ -4,7 +4,6 @@ import com.yapp.fmz.domain.Location;
 import com.yapp.fmz.domain.Room;
 import lombok.Data;
 
-import javax.persistence.Embedded;
 @Data
 public class RoomDto {
     private Long id;

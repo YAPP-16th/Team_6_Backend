@@ -1,8 +1,5 @@
 package com.yapp.fmz;
 
-import lombok.RequiredArgsConstructor;
-import lombok.Value;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +21,7 @@ public class FmzApplication {
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 		executor.setCorePoolSize(8);
 		executor.setMaxPoolSize(8);
-		executor.setQueueCapacity(500);
+		executor.setQueueCapacity(5000);
 		executor.setThreadNamePrefix("GithubLookup-");
 		executor.initialize();
 		return executor;

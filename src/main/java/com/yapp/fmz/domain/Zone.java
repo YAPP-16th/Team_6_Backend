@@ -26,8 +26,19 @@ public class Zone {
     @Embedded
     private Location location;
 
+    private String type;
+
     private String polygon;
 
     @OneToMany(mappedBy = "zone")
     private List<Room> rooms = new ArrayList<>();
+
+    @Transient
+    private Long time;
+
+    public void setFullAddress(String address){
+        Address address1 = this.getAddress();
+        address1.setAddress(address);
+        this.setAddress(address1);
+    }
 }

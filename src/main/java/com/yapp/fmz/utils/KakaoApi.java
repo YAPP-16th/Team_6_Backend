@@ -66,8 +66,8 @@ public class KakaoApi {
             RestTemplate restTemplate = restTemplateBuilder.build();
 
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl)
-                    .queryParam("x", location.getLat())
-                    .queryParam("y", location.getLng());
+                    .queryParam("x", location.getLng())
+                    .queryParam("y", location.getLat());
 
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
@@ -76,12 +76,14 @@ public class KakaoApi {
             HttpEntity<?> httpEntity = new HttpEntity<>(httpHeaders);
             ResponseEntity<String> resultMap =restTemplate.exchange(builder.build(true).toUri(), HttpMethod.GET, httpEntity, String.class);
 
+            System.out.println(resultMap.getBody().toString());
             JSONParser jsonParser = new JSONParser();
             JSONObject result = (JSONObject)jsonParser.parse(resultMap.getBody().toString());
             JSONArray documents = (JSONArray)result.get("documents");
-            JSONObject roadAddress = (JSONObject) documents.get(0);
-
+            JSONObject documentObject = (JSONObject) documents.get(0);
+            JSONObject roadAddress = (JSONObject) documentObject.get("address");
             String address = (String)roadAddress.get("address_name");
+            System.out.println(address);
             return address;
         }
         catch(Exception e){

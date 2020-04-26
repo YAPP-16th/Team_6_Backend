@@ -25,23 +25,25 @@ class ZoneControllerTest {
     public void testSimpleZoneApi(){
         long start = System.currentTimeMillis();
 
-        String tempAddress1 = "서울특별시 강남구 역삼동 테헤란로48길 10";
-        String tempAddress2 = "경기도 용인시 수지구 포은대로 313번길 7-10";
+//        String tempAddress = "서울특별시 강남구 역삼동 테헤란로48길 10";
+        String tempAddress = "경기도 용인시 수지구 포은대로 313번길 7-10";
         String tag = "회사";
-        List<String> travelMode = new ArrayList<>();
-        travelMode.add("transit");
-        Long transferLimit = 0L;
-        Long minTime = 40L;
+        List<String> transitMode = new ArrayList<>();
+        transitMode.add("bus");
+        transitMode.add("subway");
+        Long transferLimit = 3L;
+        Long minTime = 0L;
         Long maxTime = 50L;
 
-        ArrayList<Zone> zones = zoneService.findZones(tempAddress1, tag, travelMode, transferLimit, minTime, maxTime);
+        List<Zone> zones = zoneService.findZones(tempAddress, tag, transitMode, transferLimit, minTime, maxTime);
+        System.out.println("최종 추천 기초구역 : " + zones.size());
 
         long apiTotalTime = (System.currentTimeMillis() - start) / 1000;
         System.out.println("전체 검색 시간: " + apiTotalTime + "초");
 
-        assertTrue("api 전체 시간이 15초보다 작아야 한다", apiTotalTime <= 15);
+        assertTrue("api 전체 시간이 15초보다 작아야 한다", apiTotalTime <= 30);
         List<ZoneDto> collect = zones.stream().map(ZoneDto::new).collect(Collectors.toList());
-        System.out.println(collect.toString());
+
     }
 
 }

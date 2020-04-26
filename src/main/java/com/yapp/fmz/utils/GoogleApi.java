@@ -25,7 +25,7 @@ public class GoogleApi {
     private static final Logger logger = LoggerFactory.getLogger(GoogleApi.class);
 
     @Async
-    public CompletableFuture<ArrayList<Zone>> findSimpleZones(LocationVo inputLocation, List<Zone> recommendList, List<String> travelMode, Long startTime, Long endTime, int num) {
+    public CompletableFuture<ArrayList<Zone>> findSimpleZones(LocationVo inputLocation, List<Zone> recommendList, List<String> transitMode, Long startTime, Long endTime, int num) {
 
         String apiUrl = "https://maps.googleapis.com/maps/api/distancematrix/json";
         ArrayList<Zone> locations = new ArrayList<>();
@@ -36,13 +36,12 @@ public class GoogleApi {
         recommendListString += recommendList.get(0).getRooms().get(0).getLocation().getLat();
         recommendListString += ',';
         recommendListString += recommendList.get(0).getRooms().get(0).getLocation().getLng();
-        for (int i=1; i<100; i++){
+        for (int i=1; i<recommendList.size(); i++){
             recommendListString += '|';
             recommendListString += recommendList.get(i).getRooms().get(0).getLocation().getLat();
             recommendListString += ',';
             recommendListString += recommendList.get(i).getRooms().get(0).getLocation().getLng();
         }
-        System.out.println("recommendListString = " + recommendListString);
 
         try {
             logger.info("async id = " + num);
@@ -55,6 +54,7 @@ public class GoogleApi {
                     .queryParam("origins", URLEncoder.encode(recommendListString))
                     .queryParam("destinations", inputLocation.getY().toString() + ',' + inputLocation.getX().toString())
                     .queryParam("mode", "transit")
+                    .queryParam("transit_mode", URLEncoder.encode(makeModeParameter(transitMode)))
                     .queryParam("language", "ko")
                     .queryParam("key", auth);
 
@@ -63,8 +63,6 @@ public class GoogleApi {
 
             HttpEntity<?> httpEntity = new HttpEntity<>(httpHeaders);
             ResponseEntity<String> resultMap = restTemplate.exchange(builder.build(true).toUri(), HttpMethod.GET, httpEntity, String.class);
-
-            System.out.println(resultMap.getBody().toString());
 
             JSONParser jsonParser = new JSONParser();
             JSONObject result = (JSONObject)jsonParser.parse(resultMap.getBody().toString());
@@ -89,11 +87,22 @@ public class GoogleApi {
                 JSONObject distance = (JSONObject) element.get("distance");
                 JSONObject duration = (JSONObject) element.get("duration");
 
-                Long distance_value = (Long) distance.get("value") / 1000;
-                Long duration_value = (Long) duration.get("value") / 60;
+                Long distance_value;
+                Long duration_value;
+
+                if(duration == null){
+//                    System.out.println(resultMap.getBody().toString());
+                    continue;
+                }else{
+                    duration_value = (Long) duration.get("value") / 60;
+                    distance_value = (Long) distance.get("value") / 1000;
+                }
+
 
                 if (duration_value >= startTime && duration_value <= endTime) {
-                    locations.add(recommendList.get(i));
+                    Zone tempZone = recommendList.get(i);
+                    tempZone.setTime(duration_value);
+                    locations.add(tempZone);
                 }
             }
 
@@ -104,7 +113,7 @@ public class GoogleApi {
     }
 
     @Async
-    public CompletableFuture<Zone> findZones(LocationVo inputLocation, Zone recommendZone, List<String> travelMode, Long transterLimit, Long startTime, Long endTime, int num) {
+    public CompletableFuture<Zone> findZones(LocationVo inputLocation, Zone recommendZone, List<String> transitMode, Long transterLimit, Long startTime, Long endTime, int num) {
 
         String apiUrl = "https://maps.googleapis.com/maps/api/directions/json";
         ArrayList<Zone> locations = new ArrayList<>();
@@ -124,9 +133,11 @@ public class GoogleApi {
             RestTemplate restTemplate = restTemplateBuilder.build();
 
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl)
-                    .queryParam("origins", URLEncoder.encode(recommendString))
-                    .queryParam("destinations", inputLocation.getY().toString() + ',' + inputLocation.getX().toString())
-                    .queryParam("mode", makeModeParameter(travelMode))
+                    .queryParam("origin", URLEncoder.encode(recommendString))
+                    .queryParam("destination", inputLocation.getY().toString() + ',' + inputLocation.getX().toString())
+                    .queryParam("mode", "transit")
+                    .queryParam("transit_mode", makeModeParameter(transitMode))
+                    .queryParam("alternatives", "true")
                     .queryParam("language", "ko")
                     .queryParam("key", auth);
 
@@ -136,42 +147,44 @@ public class GoogleApi {
             HttpEntity<?> httpEntity = new HttpEntity<>(httpHeaders);
             ResponseEntity<String> resultMap = restTemplate.exchange(builder.build(true).toUri(), HttpMethod.GET, httpEntity, String.class);
 
-            System.out.println(resultMap.getBody().toString());
+//            System.out.println(resultMap.getBody().toString());
 
-//            JSONParser jsonParser = new JSONParser();
-//            JSONObject result = (JSONObject)jsonParser.parse(resultMap.getBody().toString());
-//
-//            JSONArray destination_addresses = (JSONArray)result.get("destination_addresses");
-//            for(Object des : destination_addresses) {
-//                destination = (String)des;
-//            }
-//            JSONArray origin_addresses = (JSONArray)result.get("origin_addresses");
-//            for(Object ori : origin_addresses) {
-//                originList.add((String)ori);
-//            }
-//
-//            JSONArray rows = (JSONArray)result.get("rows");
-//
-//            for (int i=0; i<rows.size(); i++) {
-//                JSONObject elementListObject = (JSONObject) rows.get(i);
-//
-//                JSONArray elements = (JSONArray) elementListObject.get("elements");
-//
-//                JSONObject element = (JSONObject) elements.get(0);
-//                JSONObject distance = (JSONObject) element.get("distance");
-//                JSONObject duration = (JSONObject) element.get("duration");
-//
-//                Long distance_value = (Long) distance.get("value") / 1000;
-//                Long duration_value = (Long) duration.get("value") / 60;
+            JSONParser jsonParser = new JSONParser();
+            JSONObject result = (JSONObject)jsonParser.parse(resultMap.getBody().toString());
 
-//                if (duration_value >= startTime && duration_value <= endTime) {
-//                    return CompletableFuture.completedFuture(recommendZone);
-//                }
-//                else{
-//                    CompletableFuture.completedFuture(null);
-//                }
-//            }
-//
+            JSONArray routes = (JSONArray)result.get("routes");
+            for (int i=0; i<routes.size(); i++) {
+                int transitCount = 0;
+                JSONObject routeObject = (JSONObject) routes.get(i);
+
+                JSONArray legs = (JSONArray) routeObject.get("legs");
+
+                JSONObject legObject = (JSONObject) legs.get(0);
+                JSONObject duration = (JSONObject) legObject.get("duration");
+                Long duration_value = (Long) duration.get("value") / 60;
+                JSONArray steps = (JSONArray) legObject.get("steps");
+
+                JSONObject stepFirstObject = (JSONObject)steps.get(0);
+                String modeValue = (String)stepFirstObject.get("travel_mode");
+                for(int j=1; j<steps.size(); j++){
+                    JSONObject stepObject = (JSONObject)steps.get(j);
+                    String modeObject = (String)stepObject.get("travel_mode");
+
+                    if(modeValue.equals("TRANSIT") && modeObject.equals("TRANSIT")){
+                        transitCount++;
+                    }
+                    modeValue = modeObject;
+                }
+
+                if (duration_value >= startTime && duration_value <= endTime && transitCount <= transterLimit) {
+                    recommendZone.setTime(duration_value);
+                    return CompletableFuture.completedFuture(recommendZone);
+                }
+                else{
+                    continue;
+                }
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -179,6 +192,9 @@ public class GoogleApi {
     }
 
     public String makeModeParameter(List<String> input){
+        if(input.isEmpty()){
+            return "";
+        }
         String output = "";
         output += input.get(0);
         for (int i=1; i<input.size(); i++){
