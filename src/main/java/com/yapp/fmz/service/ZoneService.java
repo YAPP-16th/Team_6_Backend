@@ -7,6 +7,7 @@ import com.yapp.fmz.repository.RoomRepository;
 import com.yapp.fmz.repository.ZoneRepository;
 import com.yapp.fmz.utils.GoogleApi;
 import com.yapp.fmz.utils.KakaoApi;
+import com.yapp.fmz.utils.ProjectionUtils;
 import org.osgeo.proj4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,8 @@ public class ZoneService {
     KakaoApi kakaoAPI;
     @Autowired
     GoogleApi googleAPI;
+    @Autowired
+    ProjectionUtils projectionUtils;
 //    @Autowired
 //    SearchRepositoy searchRepositoy;
 
@@ -86,7 +89,7 @@ public class ZoneService {
 
 //         좌표->좌표 변환
         long transStart = System.currentTimeMillis();
-        ProjCoordinate trans = transformLocationToUtm(x, y);
+        ProjCoordinate trans = projectionUtils.transformLocationToUtm(x, y);
         System.out.println("좌표 변환 수행시간: " + (System.currentTimeMillis() - transStart) / 1000 + "초");
 
 //         매물이 있는 기초구역만 필터링
@@ -192,7 +195,7 @@ public class ZoneService {
 
 //         좌표->좌표 변환
         long transStart = System.currentTimeMillis();
-        ProjCoordinate trans = transformLocationToUtm(x, y);
+        ProjCoordinate trans = projectionUtils.transformLocationToUtm(x, y);
         System.out.println("좌표 변환 수행시간: " + (System.currentTimeMillis() - transStart) / 1000 + "초");
 
 //         매물이 있는 기초구역만 필터링
@@ -231,52 +234,6 @@ public class ZoneService {
         CoordinateReferenceSystem GOOGLE = csFactory.createFromParameters("EPSG:3857", "+proj=tmerc +lat_0=38 +lon_0=127.5 +k=0.9996 +x_0=1000000 +y_0=2000000 +ellps=GRS80 +units=m +no_defs ");
 
         CoordinateReferenceSystem WGS84 = csFactory.createFromParameters("WGS84", "+proj=longlat +datum=WGS84 +no_defs");
-
-        CoordinateTransform trans = ctFactory.createTransform(GOOGLE, WGS84);
-
-        ProjCoordinate p = new ProjCoordinate();
-
-        ProjCoordinate p2 = new ProjCoordinate();
-
-        p.x = x;
-        p.y = y;
-
-        return trans.transform(p, p2);
-
-    }
-
-    public static ProjCoordinate transformLocationToUtm(Double x, Double y) {
-
-        CoordinateTransformFactory ctFactory = new CoordinateTransformFactory();
-
-        CRSFactory csFactory = new CRSFactory();
-
-        CoordinateReferenceSystem GOOGLE = csFactory.createFromParameters("WGS84", "+proj=longlat +datum=WGS84 +no_defs");
-
-        CoordinateReferenceSystem WGS84 = csFactory.createFromParameters("EPSG:3857", "+proj=tmerc +lat_0=38 +lon_0=127.5 +k=0.9996 +x_0=1000000 +y_0=2000000 +ellps=GRS80 +units=m +no_defs ");
-
-        CoordinateTransform trans = ctFactory.createTransform(GOOGLE, WGS84);
-
-        ProjCoordinate p = new ProjCoordinate();
-
-        ProjCoordinate p2 = new ProjCoordinate();
-
-        p.x = x;
-        p.y = y;
-
-        return trans.transform(p, p2);
-
-    }
-
-    public static ProjCoordinate transformLocationToUtm2(Double x, Double y) {
-
-        CoordinateTransformFactory ctFactory = new CoordinateTransformFactory();
-
-        CRSFactory csFactory = new CRSFactory();
-
-        CoordinateReferenceSystem GOOGLE = csFactory.createFromParameters("WGS84", "+proj=tmerc +lat_0=38 +lon_0=127.5 +k=0.9996 +x_0=1000000 +y_0=2000000 +ellps=GRS80 +units=m +no_defs\n");
-
-        CoordinateReferenceSystem WGS84 = csFactory.createFromParameters("EPSG:3857", "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs");
 
         CoordinateTransform trans = ctFactory.createTransform(GOOGLE, WGS84);
 

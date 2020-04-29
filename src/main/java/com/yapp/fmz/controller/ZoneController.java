@@ -1,7 +1,7 @@
 package com.yapp.fmz.controller;
 
 import com.yapp.fmz.domain.Zone;
-import com.yapp.fmz.domain.dto.RequestZonesDto;
+import com.yapp.fmz.domain.dto.RequestFindZoneDto;
 import com.yapp.fmz.domain.dto.ZoneDto;
 import com.yapp.fmz.service.ZoneService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class ZoneController {
 
     @ResponseBody
     @GetMapping("/zones")
-    public HashMap<String, Object> recommendZone(@RequestBody RequestZonesDto requestZone) {
+    public HashMap<String, Object> recommendZone(@RequestBody RequestFindZoneDto requestZone) {
 
         long time = System.currentTimeMillis();
 
@@ -47,7 +47,7 @@ public class ZoneController {
 
     @ResponseBody
     @GetMapping("/test")
-    public HashMap<String, Object> testServerRecommendZone(@RequestBody RequestZonesDto requestZone) {
+    public HashMap<String, Object> testServerRecommendZone(@RequestBody RequestFindZoneDto requestZone) {
 
         HashMap<String, Object> response = new HashMap<>();
         List<Zone> zones = zoneService.findOnlyRecommendZones(requestZone.getAddress(), requestZone.getAddressTag(), requestZone.getTransitMode(), requestZone.getTransferLimit(), requestZone.getMinTime()-2, requestZone.getMaxTime()+2);
@@ -66,7 +66,7 @@ public class ZoneController {
 
     @ResponseBody
     @GetMapping("/test/zones")
-    public HashMap<String, Object> testRecommendZone(@RequestBody RequestZonesDto requestZone) {
+    public HashMap<String, Object> testRecommendZone(@RequestBody RequestFindZoneDto requestZone) {
 
         HashMap<String, Object> response = new HashMap<>();
         List<Zone> zones = zoneService.findTestZones();

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;
 
 @Data
-public class RequestZonesDto {
+public class RequestFindZoneDto {
     private String address;
     private String addressTag;
     private List<String> transitMode;
