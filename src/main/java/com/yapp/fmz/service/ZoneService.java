@@ -2,6 +2,8 @@ package com.yapp.fmz.service;
 
 import com.yapp.fmz.domain.Room;
 import com.yapp.fmz.domain.Zone;
+import com.yapp.fmz.domain.enu.Category;
+import com.yapp.fmz.domain.vo.CategoryVo;
 import com.yapp.fmz.domain.vo.LocationVo;
 import com.yapp.fmz.repository.RoomRepository;
 import com.yapp.fmz.repository.ZoneRepository;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -225,28 +228,26 @@ public class ZoneService {
         return recommend;
     }
 
-    public static ProjCoordinate transformUtmToLocation(Double x, Double y) {
-
-        CoordinateTransformFactory ctFactory = new CoordinateTransformFactory();
-
-        CRSFactory csFactory = new CRSFactory();
-
-        CoordinateReferenceSystem GOOGLE = csFactory.createFromParameters("EPSG:3857", "+proj=tmerc +lat_0=38 +lon_0=127.5 +k=0.9996 +x_0=1000000 +y_0=2000000 +ellps=GRS80 +units=m +no_defs ");
-
-        CoordinateReferenceSystem WGS84 = csFactory.createFromParameters("WGS84", "+proj=longlat +datum=WGS84 +no_defs");
-
-        CoordinateTransform trans = ctFactory.createTransform(GOOGLE, WGS84);
-
-        ProjCoordinate p = new ProjCoordinate();
-
-        ProjCoordinate p2 = new ProjCoordinate();
-
-        p.x = x;
-        p.y = y;
-
-        return trans.transform(p, p2);
-
+    public List<CategoryVo> findPlaces(Long zoneId){
+        List<CategoryVo> categoryVoList = new ArrayList<>();
+        Optional<Zone> zone = zoneRepository.findById(zoneId);
+        if(zone.isPresent()){
+            HashMap<String, String> location = kakaoAPI.convertAddressToLocation(zone.get().getAddress().getAddress());
+            Double x = Double.parseDouble(location.get("x"));
+            Double y = Double.parseDouble(location.get("y"));
+            LocationVo parsedLocation = new LocationVo(x, y);
+            for (Category category: Category.values()) {
+//                System.out.println(category.toString());
+                categoryVoList.add(kakaoAPI.findPlaceNearZone(parsedLocation, category));
+            }
+        }
+        else{
+            return null;
+        }
+        return categoryVoList;
     }
+
+
 
     private static <T> List<List<T>> partition(List<T> resList, int count) {
         if (resList == null || count < 1)
