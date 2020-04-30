@@ -15,8 +15,11 @@ public class RoomService {
     RoomRepository roomRepository;
 
 
-    public List<Room> findRooms(Long zone_id){
-        return roomRepository.findRoomsByZone(zone_id);
+    public List<Room> findRoomsByMonthlyPayment(Long zone_id){
+        return roomRepository.findRoomsByZoneOrderByMonthlyPayment(zone_id);
+    }
+    public List<Room> findRoomsByRegisterdId(Long zone_id){
+        return roomRepository.findRoomsByZoneOrderByRegisterId(zone_id);
     }
 
 }

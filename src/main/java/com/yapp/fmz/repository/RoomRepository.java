@@ -12,6 +12,9 @@ import java.util.List;
 @Repository
 public interface RoomRepository extends JpaRepository<Room, Long> {
 
-    @Query(value = "SELECT  r from Room r  Where r.zone.id = ?1")
-    public List<Room> findRoomsByZone(Long zone_id);
+    @Query(value = "SELECT  r from Room r  Where r.zone.id = ?1 order by r.monthlyPayment asc")
+    public List<Room> findRoomsByZoneOrderByMonthlyPayment(Long zone_id);
+
+    @Query(value = "SELECT  r from Room r  Where r.zone.id = ?1 order by r.registerId asc")
+    public List<Room> findRoomsByZoneOrderByRegisterId(Long zone_id);
 }
