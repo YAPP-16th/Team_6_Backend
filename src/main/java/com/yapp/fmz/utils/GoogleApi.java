@@ -1,10 +1,13 @@
 package com.yapp.fmz.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yapp.fmz.domain.Zone;
 import com.yapp.fmz.domain.vo.LocationVo;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -14,9 +17,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 @Component
@@ -211,4 +218,99 @@ public class GoogleApi {
         return output;
     }
 
-}
+
+    public ArrayList findTransport(LocationVo inputLocation, LocationVo outputLocation) throws JsonProcessingException {
+
+        ArrayList result = new ArrayList();
+
+        RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
+        restTemplateBuilder.setBufferRequestBody(false);
+        RestTemplate restTemplate = restTemplateBuilder.build();
+
+        String url ="https://maps.googleapis.com/maps/api/directions/json";
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
+                .queryParam("origin", inputLocation.getY().toString() + ',' + inputLocation.getX().toString())
+                .queryParam("destination", outputLocation.getY().toString() + ',' + outputLocation.getX().toString())
+                .queryParam("mode", "transit")
+                .queryParam("language", "ko")
+                .queryParam("alternatives", "true")
+                .queryParam("key", auth);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+
+        HttpEntity<?> httpEntity = new HttpEntity<>(httpHeaders);
+        ResponseEntity<String> resultMap = restTemplate.exchange(builder.build(true).toUri(), HttpMethod.GET, httpEntity, String.class);
+
+        try {
+
+            JSONParser jsonParse = new JSONParser();
+            JSONObject jsonObj = (JSONObject) jsonParse.parse(resultMap.getBody());
+            JSONArray routes = (JSONArray)jsonObj.get("routes");
+
+            for (int i=0; i<routes.size(); i++) {
+
+                int transitCount = 0;
+                HashMap<String,Object> tmp = new HashMap<>();
+                HashSet<String> transitType = new HashSet<>();
+
+                JSONObject routeObject = (JSONObject) routes.get(i);
+                JSONArray legs = (JSONArray) routeObject.get("legs");
+
+                JSONObject legObject = (JSONObject) legs.get(0);
+                JSONObject duration = (JSONObject) legObject.get("duration");
+                Long duration_value;
+
+                if(duration == null){
+                    continue;
+                }else{
+                    duration_value = (Long) duration.get("value") / 60;
+                    tmp.put("time",duration_value );
+                }
+
+                JSONArray steps = (JSONArray) legObject.get("steps");
+
+                for(int j=1; j<steps.size(); j++){
+
+                    JSONObject stepObject = (JSONObject)steps.get(j);
+                    String modeObject = (String)stepObject.get("travel_mode");
+
+                    //대중교통인 경우
+                    if( modeObject.equals("TRANSIT")){
+
+                        JSONObject transitObject = (JSONObject) stepObject.get("transit_details");
+                        JSONObject departureStopObject = (JSONObject) transitObject.get("departure_stop");
+                        String departureName = (String) departureStopObject.get("name");
+                        JSONObject lineObject = (JSONObject) transitObject.get("line");
+                        JSONObject vehicleObject = (JSONObject) lineObject.get("vehicle");
+                        String vehicleType = (String) vehicleObject.get("name");
+                        String number = (String) lineObject.get("short_name");
+
+                        //첫 정류장 정보 파싱
+                        if (!tmp.containsKey("firstStation")){
+                            tmp.put("firstStation",departureName );
+                            tmp.put("firstStationLine", number );
+
+                        }
+                        transitType.add(vehicleType);
+                        transitCount++;
+                    }
+
+                }
+                tmp.put("vehicleTypes",transitType);
+                tmp.put("transitCount", transitCount );
+                result.add( tmp );
+
+
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+
+    }
+
+
+    }
