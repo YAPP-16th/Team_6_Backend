@@ -27,10 +27,16 @@ public class ZoneController {
     ZoneService zoneService;
 
     @GetMapping("/init")
-    public String test(){
+    public String init(){
         zoneService.initialZoneToRoomData();
         zoneService.initialAddressData();
         return "DB INITIALIZED SUCCESS";
+    }
+
+    @GetMapping("/init/polygon")
+    public String initPolygon(){
+        zoneService.initialPolygonJsonData();
+        return "Polygon INITIALIZED SUCCESS";
     }
 
     @ApiOperation(value = "사용자 선택 기반 추천 기초구역 매물 정보", notes = "사용자 선택에 기반한 추천 기초구역과 기초구역 내 매물 정보입니다.")
