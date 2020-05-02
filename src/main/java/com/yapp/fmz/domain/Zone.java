@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,11 @@ public class Zone {
 
     private String polygon;
 
+    private String polygonJson;
+
+    private Double x;
+    private Double y;
+
     @OneToMany(mappedBy = "zone")
     private List<Room> rooms = new ArrayList<>();
 
@@ -40,5 +46,10 @@ public class Zone {
         Address address1 = this.getAddress();
         address1.setAddress(address);
         this.setAddress(address1);
+    }
+
+    public void setConvertLocation(Double x, Double y){
+        this.setX(x);
+        this.setY(y);
     }
 }

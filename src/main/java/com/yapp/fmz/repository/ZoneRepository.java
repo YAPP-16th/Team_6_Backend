@@ -28,4 +28,6 @@ public interface ZoneRepository extends JpaRepository<Zone, Long>, ZoneRepositor
 
     @Query(value = "Select distinct z from Zone z join fetch z.rooms ")
     public List<Zone> findFetchAll();
+
+    public List<Zone> findZonesByType(String type);
 }

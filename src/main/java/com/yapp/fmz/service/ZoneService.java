@@ -1,13 +1,22 @@
 package com.yapp.fmz.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yapp.fmz.domain.Location;
 import com.yapp.fmz.domain.Room;
 import com.yapp.fmz.domain.Zone;
+import com.yapp.fmz.domain.enu.Category;
+import com.yapp.fmz.domain.vo.CategoryVo;
 import com.yapp.fmz.domain.vo.LocationVo;
+import com.yapp.fmz.domain.vo.TestLocationVo;
 import com.yapp.fmz.repository.RoomRepository;
 import com.yapp.fmz.repository.ZoneRepository;
 import com.yapp.fmz.utils.GoogleApi;
 import com.yapp.fmz.utils.KakaoApi;
 import com.yapp.fmz.utils.ProjectionUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.junit.Test;
 import org.osgeo.proj4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -79,6 +89,201 @@ public class ZoneService {
         }
     }
 
+    @Transactional
+    public void initialPolygonJsonData() {
+
+        List<Zone> all = zoneRepository.findZonesByType("Multipolygon");
+
+        for (Zone zone : all) {
+            String type = zone.getType();
+            String polygon = zone.getPolygon();
+
+            if (type.equals("Polygon")) {
+//                List<List<TestLocationVo>> locationList = new ArrayList<>();
+//
+//                String substring = polygon.substring(10);
+//                String substring1 = substring.substring(0, substring.length() - 2);
+//                System.out.println("substring1 = " + substring1);
+//                String[] split = substring1.split("\\), \\(");
+//
+//                for (int i = 0; i < split.length; i++) {
+//                    String origin = split[i];
+//                    if (i == split.length - 1) {
+//                        origin = split[i].substring(0, split[i].length() - 2);
+//                    }
+//                    origin = origin.substring(2);
+//                    String[] originSplit = origin.split(", ");
+//
+//                    List<TestLocationVo> location = new ArrayList<>();
+//                    for (int j = 0; j < originSplit.length; j++) {
+//                        String[] s = originSplit[j].split(" ");
+//
+//                        ProjCoordinate projCoordinate = projectionUtils.transforUtmToLocation(Double.valueOf(s[0]), Double.valueOf(s[1]));
+//                        double x = projCoordinate.x;
+//                        double y = projCoordinate.y;
+//
+//                        location.add(new TestLocationVo(x, y));
+//                    }
+//                    locationList.add(location);
+//                }
+//
+//                String result = "";
+//                try {
+//                    result = new ObjectMapper().writeValueAsString(locationList);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                zone.setPolygonJson(result.toString());
+
+            } else {
+                List<List<List<TestLocationVo>>> locationList1 = new ArrayList<>();
+                List<List<TestLocationVo>> locationList2 = new ArrayList<>();
+
+                String substring = polygon.substring(15);
+                String substring1 = substring.substring(0, substring.length() - 1);
+
+                String[] split = substring1.split("\\)\\), \\(");
+                for (int i = 0; i < split.length; i++) {
+                    System.out.println("First Split" + split[i]);
+
+                    String origin = split[i];
+                    if (i == split.length - 1) {
+                        origin = split[i].substring(0, split[i].length() - 2);
+                    }
+
+                    String[] secondSplit = origin.split("\\), \\(");
+                    for (int j = 0; j < secondSplit.length; j++) {
+                        String secondSplitObject = secondSplit[j];
+                        if (j == 0) {
+                            secondSplitObject = secondSplitObject.substring(1);
+                            System.out.println("secondSplitObject = " + secondSplitObject);
+                        }
+
+                        String[] thirdSplitObject = secondSplitObject.split(", ");
+
+                        List<TestLocationVo> location = new ArrayList<>();
+                        for (int k = 0; k < thirdSplitObject.length; k++) {
+                            String[] s = thirdSplitObject[k].split(" ");
+
+                            ProjCoordinate projCoordinate = projectionUtils.transforUtmToLocation(Double.valueOf(s[0]), Double.valueOf(s[1]));
+                            double x = projCoordinate.x;
+                            double y = projCoordinate.y;
+
+                            location.add(new TestLocationVo(x, y));
+                        }
+                        locationList2.add(location);
+                    }
+                    locationList1.add(locationList2);
+                }
+
+                String result = "";
+                try {
+                    result = new ObjectMapper().writeValueAsString(locationList1);
+                    System.out.println("result" + result);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                zone.setPolygonJson(result.toString());
+
+            }
+
+//            Double lat = zone.getLocation().getLat();
+//            Double lng = zone.getLocation().getLng();
+//
+//            ProjCoordinate projCoordinate = projectionUtils.transforUtmToLocation(lat, lng);
+//            double x = projCoordinate.x;
+//            double y = projCoordinate.y;
+//
+//            zone.setConvertLocation(x, y);
+        }
+    }
+
+    @Transactional
+    public void initialPolygonJsonData1() {
+
+        List<Zone> all = zoneRepository.findAll();
+
+        for (Zone zone : all) {
+            String type = zone.getType();
+            String polygon = zone.getPolygon();
+
+            if (type.equals("Polygon")) {
+                String substring = polygon.substring(10);
+                String substring1 = substring.substring(0, substring.length() - 2);
+                System.out.println("substring1 = " + substring1);
+                String[] split = substring1.split("\\), \\(");
+
+                List<TestLocationVo> location = new ArrayList<>();
+
+                for (int i = 0; i < split.length; i++) {
+                    String[] s = split[i].split(" ");
+
+                    for (String se : s) {
+                        System.out.println(se);
+                    }
+
+                    ProjCoordinate projCoordinate = projectionUtils.transforUtmToLocation(Double.valueOf(s[0]), Double.valueOf(s[1]));
+                    double x = projCoordinate.x;
+                    double y = projCoordinate.y;
+
+                    location.add(new TestLocationVo(x, y));
+                }
+
+                String result = "";
+                try {
+                    result = new ObjectMapper().writeValueAsString(location);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                zone.setPolygonJson(result.toString());
+            } else {
+                List<List<TestLocationVo>> locationList = new ArrayList<>();
+
+                String substring = polygon.substring(14);
+                String substring1 = substring.substring(0, substring.length() - 1);
+                String[] split = substring1.split("\\)\\), ");
+                for (int i = 0; i < split.length; i++) {
+                    String origin = split[i];
+                    if (i == split.length - 1) {
+                        origin = split[i].substring(0, split[i].length() - 2);
+                    }
+                    origin = origin.substring(2);
+                    String[] originSplit = origin.split(", ");
+
+                    List<TestLocationVo> location = new ArrayList<>();
+                    for (int j = 0; j < originSplit.length; j++) {
+                        String[] s = originSplit[j].split(" ");
+
+                        ProjCoordinate projCoordinate = projectionUtils.transforUtmToLocation(Double.valueOf(s[0]), Double.valueOf(s[1]));
+                        double x = projCoordinate.x;
+                        double y = projCoordinate.y;
+
+                        location.add(new TestLocationVo(x, y));
+                    }
+                    locationList.add(location);
+                }
+
+                JSONParser jsonParser = new JSONParser();
+                String result = "";
+                try {
+                    result = new ObjectMapper().writeValueAsString(locationList);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                zone.setPolygonJson(result.toString());
+            }
+
+            Double lat = zone.getLocation().getLat();
+            Double lng = zone.getLocation().getLng();
+
+            ProjCoordinate projCoordinate = projectionUtils.transforUtmToLocation(lat, lng);
+            double x = projCoordinate.x;
+            double y = projCoordinate.y;
+
+            zone.setConvertLocation(x, y);
+        }
+    }
+
     public List<Zone> findZones(String address, String tag, List<String> transitMode, Long transferLimit, Long minTime, Long maxTime) {
 //         주소->좌표 변환
         HashMap<String, String> location = kakaoAPI.convertAddressToLocation(address);
@@ -132,7 +337,7 @@ public class ZoneService {
         try {
             for (CompletableFuture<ArrayList<Zone>> locationCompletableFuture : futureList) {
                 ArrayList<Zone> join = locationCompletableFuture.join();
-                if(join != null){
+                if (join != null) {
                     recommendLocationList.addAll(join);
                 }
 
@@ -155,7 +360,7 @@ public class ZoneService {
             try {
                 for (CompletableFuture<Zone> locationCompletableFuture : futureTransferList) {
                     Zone join = locationCompletableFuture.join();
-                    if(join != null){
+                    if (join != null) {
                         finalRecommendLocationList.add(join);
                     }
                 }
@@ -163,7 +368,7 @@ public class ZoneService {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else{
+        } else {
             finalRecommendLocationList = recommendLocationList;
         }
         System.out.println("길찾기 api 수행시간: " + (System.currentTimeMillis() - api2Start) / 1000 + "초");
@@ -176,7 +381,7 @@ public class ZoneService {
         return finalRecommendLocationList;
     }
 
-    public List<Zone> findTestZones(){
+    public List<Zone> findTestZones() {
         List<Zone> testZonesHasRoom = zoneRepository.findTestZonesHasRoom();
         for (Zone zone :
                 testZonesHasRoom) {
@@ -225,28 +430,24 @@ public class ZoneService {
         return recommend;
     }
 
-    public static ProjCoordinate transformUtmToLocation(Double x, Double y) {
-
-        CoordinateTransformFactory ctFactory = new CoordinateTransformFactory();
-
-        CRSFactory csFactory = new CRSFactory();
-
-        CoordinateReferenceSystem GOOGLE = csFactory.createFromParameters("EPSG:3857", "+proj=tmerc +lat_0=38 +lon_0=127.5 +k=0.9996 +x_0=1000000 +y_0=2000000 +ellps=GRS80 +units=m +no_defs ");
-
-        CoordinateReferenceSystem WGS84 = csFactory.createFromParameters("WGS84", "+proj=longlat +datum=WGS84 +no_defs");
-
-        CoordinateTransform trans = ctFactory.createTransform(GOOGLE, WGS84);
-
-        ProjCoordinate p = new ProjCoordinate();
-
-        ProjCoordinate p2 = new ProjCoordinate();
-
-        p.x = x;
-        p.y = y;
-
-        return trans.transform(p, p2);
-
+    public List<CategoryVo> findPlaces(Long zoneId) {
+        List<CategoryVo> categoryVoList = new ArrayList<>();
+        Optional<Zone> zone = zoneRepository.findById(zoneId);
+        if (zone.isPresent()) {
+            HashMap<String, String> location = kakaoAPI.convertAddressToLocation(zone.get().getAddress().getAddress());
+            Double x = Double.parseDouble(location.get("x"));
+            Double y = Double.parseDouble(location.get("y"));
+            LocationVo parsedLocation = new LocationVo(x, y);
+            for (Category category : Category.values()) {
+//                System.out.println(category.toString());
+                categoryVoList.add(kakaoAPI.findPlaceNearZone(parsedLocation, category));
+            }
+        } else {
+            return null;
+        }
+        return categoryVoList;
     }
+
 
     private static <T> List<List<T>> partition(List<T> resList, int count) {
         if (resList == null || count < 1)
@@ -277,6 +478,23 @@ public class ZoneService {
             }
         }
         return ret;
+
+    }
+
+    public void convertTest() {
+        ProjCoordinate projCoordinate = projectionUtils.transforUtmToLocation(939376.0636528851, 1953415.9097094277);
+        double x = projCoordinate.x;
+        double y = projCoordinate.y;
+
+        System.out.println(x);
+        System.out.println(y);
+
+        ProjCoordinate projCoordinate1 = projectionUtils.transformLocationToUtm(126.81342008881066, 37.57813056002237);
+        double x1 = projCoordinate1.x;
+        double y1 = projCoordinate1.y;
+
+        System.out.println(x1);
+        System.out.println(y1);
 
     }
 }

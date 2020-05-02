@@ -29,13 +29,13 @@ public class ProjectionUtils {
 
     }
 
-    public ProjCoordinate transformLocationToUtm2(Double x, Double y) {
+    public ProjCoordinate transforUtmToLocation(Double x, Double y) {
 
         CoordinateTransformFactory ctFactory = new CoordinateTransformFactory();
 
         CRSFactory csFactory = new CRSFactory();
 
-        CoordinateReferenceSystem GOOGLE = csFactory.createFromParameters("WGS84", "+proj=tmerc +lat_0=38 +lon_0=127.5 +k=0.9996 +x_0=1000000 +y_0=2000000 +ellps=GRS80 +units=m +no_defs\n");
+        CoordinateReferenceSystem GOOGLE = csFactory.createFromParameters("WGS84", "+proj=tmerc +lat_0=38 +lon_0=127.5 +k=0.9996 +x_0=1000000 +y_0=2000000 +ellps=GRS80 +units=m +no_defs");
 
         CoordinateReferenceSystem WGS84 = csFactory.createFromParameters("EPSG:3857", "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs");
 

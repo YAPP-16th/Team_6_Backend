@@ -4,6 +4,9 @@ import com.yapp.fmz.domain.Address;
 import com.yapp.fmz.domain.Location;
 import com.yapp.fmz.domain.Zone;
 import lombok.Data;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,22 +19,30 @@ public class ZoneDto implements Comparable<ZoneDto>{
     private Long zipcode;
     private Address address;
     private Location location;
-    private String type;
-    private String polygon;
+    private Double x;
+    private Double y;
+    private Object polygon;
     private Long time;
     private List<RoomDto> rooms = new ArrayList<>();
 
     public ZoneDto(Zone zone) {
-        this.id = zone.getId();
-        this.zipcode = zone.getZipcode();
-        this.address = zone.getAddress();
-        this.location = zone.getLocation();
-        this.type = zone.getType();
-        this.polygon = zone.getPolygon();
-        this.time = zone.getTime();
-        this.rooms = zone.getRooms().stream()
-                .map(RoomDto::new)
-                .collect(toList());
+        try{
+            JSONParser jsonParser = new JSONParser();
+            this.id = zone.getId();
+            this.zipcode = zone.getZipcode();
+            this.address = zone.getAddress();
+            this.location = zone.getLocation();
+            this.x = zone.getX();
+            this.y = zone.getY();
+            this.polygon = jsonParser.parse(zone.getPolygonJson());
+            this.time = zone.getTime();
+            this.rooms = zone.getRooms().stream()
+                    .map(RoomDto::new)
+                    .collect(toList());
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     @Override
