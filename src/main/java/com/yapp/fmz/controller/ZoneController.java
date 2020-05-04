@@ -27,14 +27,14 @@ public class ZoneController {
     ZoneService zoneService;
 
     @GetMapping("/init")
-    public String init(){
+    public String init() {
         zoneService.initialZoneToRoomData();
         zoneService.initialAddressData();
         return "DB INITIALIZED SUCCESS";
     }
 
     @GetMapping("/init/polygon")
-    public String initPolygon(){
+    public String initPolygon() {
         zoneService.initialPolygonJsonData();
         return "Polygon INITIALIZED SUCCESS";
     }
@@ -47,19 +47,25 @@ public class ZoneController {
     })
     @ResponseBody
     @GetMapping("/zones")
-    public HashMap<String, Object> recommendZone(@RequestBody RequestFindZoneDto requestZone) {
-
+    public HashMap<String, Object> recommendZone(
+            @RequestParam String address,
+            @RequestParam String addressTag,
+            @RequestParam List<String> transitMode,
+            @RequestParam Long transferLimit,
+            @RequestParam Long minTime,
+            @RequestParam Long maxTime
+    ) {
         long time = System.currentTimeMillis();
 
         HashMap<String, Object> response = new HashMap<>();
-        List<Zone> zones = zoneService.findZones(requestZone.getAddress(), requestZone.getAddressTag(), requestZone.getTransitMode(), requestZone.getTransferLimit(), requestZone.getMinTime()-2, requestZone.getMaxTime()+2);
+        List<Zone> zones = zoneService.findZones(address, addressTag, transitMode, transferLimit, minTime - 2, maxTime + 2);
         List<ZoneDto> data = zones.stream().map(ZoneDto::new).sorted().collect(toList());
-        if(data.size() > 0){
+        if (data.size() > 0) {
             response.put("code", 200);
             response.put("message", "정상");
             response.put("data", data);
 
-        }else{
+        } else {
             response.put("code", 404);
             response.put("message", "해당 조건의 기초구역이 존재하지 않습니다.");
         }
@@ -74,13 +80,13 @@ public class ZoneController {
             @ApiResponse(code = 400, message = "통신에 실패했습니다.")
     })
     @GetMapping("/places")
-    public HashMap<String, Object> findPlaceInZone(@ApiParam(value = "기초구역 ID", required = true, example = "2") @RequestParam("zoneId") Long zone_id){
+    public HashMap<String, Object> findPlaceInZone(@ApiParam(value = "기초구역 ID", required = true, example = "2") @RequestParam("zoneId") Long zone_id) {
         HashMap<String, Object> response = new HashMap<String, Object>();
         List<CategoryVo> categoryVoList = zoneService.findPlaces(zone_id);
-        if (categoryVoList.size() ==0){
+        if (categoryVoList.size() == 0) {
             response.put("code", 300);
             response.put("message", "해당 조건의 주변 환경 정보가 존재하지 않습니다.");
-        }else {
+        } else {
             response.put("code", 200);
             response.put("message", "주변 환경 정보를 정상적으로 가져왔습니다.");
             response.put("data", categoryVoList);
@@ -98,17 +104,31 @@ public class ZoneController {
     })
     @ResponseBody
     @GetMapping("/test/zones")
-    public HashMap<String, Object> testRecommendZone(@RequestBody RequestFindZoneDto requestZone) {
+    public HashMap<String, Object> testRecommendZone(
+            @RequestParam String address,
+            @RequestParam String addressTag,
+            @RequestParam List<String> transitMode,
+            @RequestParam Long transferLimit,
+            @RequestParam Long minTime,
+            @RequestParam Long maxTime
+    ) {
+
+        System.out.println("address = " + address);
+        System.out.println("tag = " + addressTag);
+        System.out.println("transitMode = " + transitMode.toString());
+        System.out.println("transferLimit = " + transferLimit);
+        System.out.println("minTime = " + minTime);
+        System.out.println("maxTime = " + maxTime);
 
         HashMap<String, Object> response = new HashMap<>();
         List<Zone> zones = zoneService.findTestZones();
         List<ZoneDto> data = zones.stream().map(ZoneDto::new).sorted().collect(toList());
-        if(data.size() > 0){
+        if (data.size() > 0) {
             response.put("code", 200);
             response.put("message", "정상");
             response.put("data", data);
 
-        }else{
+        } else {
             response.put("code", 404);
             response.put("message", "해당 조건의 기초구역이 존재하지 않습니다.");
         }
@@ -117,17 +137,24 @@ public class ZoneController {
 
     @ResponseBody
     @GetMapping("/server/test/zones")
-    public HashMap<String, Object> testServerRecommendZone(@RequestBody RequestFindZoneDto requestZone) {
+    public HashMap<String, Object> testServerRecommendZone(
+            @RequestParam String address,
+            @RequestParam String addressTag,
+            @RequestParam List<String> transitMode,
+            @RequestParam Long transferLimit,
+            @RequestParam Long minTime,
+            @RequestParam Long maxTime
+    ) {
 
         HashMap<String, Object> response = new HashMap<>();
-        List<Zone> zones = zoneService.findOnlyRecommendZones(requestZone.getAddress(), requestZone.getAddressTag(), requestZone.getTransitMode(), requestZone.getTransferLimit(), requestZone.getMinTime()-2, requestZone.getMaxTime()+2);
+        List<Zone> zones = zoneService.findOnlyRecommendZones(address, addressTag, transitMode, transferLimit, minTime - 2, maxTime + 2);
         List<ZoneDto> data = zones.stream().map(ZoneDto::new).sorted().collect(toList());
-        if(data.size() > 0){
+        if (data.size() > 0) {
             response.put("code", 200);
             response.put("message", "정상");
             response.put("data", data);
 
-        }else{
+        } else {
             response.put("code", 404);
             response.put("message", "해당 조건의 기초구역이 존재하지 않습니다.");
         }
