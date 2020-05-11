@@ -10,10 +10,7 @@ import com.yapp.fmz.service.ZoneService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -41,7 +38,7 @@ public class RoomController {
             @ApiResponse(code = 400, message = "통신에 실패했습니다.")
     })
     @GetMapping("/rooms/byPrice/")
-    public HashMap<String, Object> RoomsByMonthlyPayment(@ApiParam(value = "ZONE ID", required = true, example = "3776") @RequestParam("zoneId") Long zone_id){
+    public HashMap<String, Object> RoomsByMonthlyPayment(@ApiParam(value = "ZONE ID", required = true, example = "3776") @RequestParam("zoneId") Long zone_id) throws Exception{
         HashMap<String, Object> response = new HashMap<String, Object>();
 
         List<Room> roomList = roomService.findRoomsByMonthlyPayment(zone_id);
@@ -54,6 +51,7 @@ public class RoomController {
             response.put("message", "매물 데이터를 정상적으로 가져왔습니다.");
             response.put("data", data);
         }
+
 
         return response;
 
@@ -71,10 +69,10 @@ public class RoomController {
 
         List<Room> roomList = roomService.findRoomsByRegisterdId(zone_id);
         List<RoomDto> data = roomList.stream().map(name -> new RoomDto(name)).collect(Collectors.toList());
-        if (roomList.size() ==0){
+        if (roomList.size() == 0) {
             response.put("code", 300);
             response.put("message", "해당 조건의 매물이 존재하지 않습니다.");
-        }else {
+        } else {
             response.put("code", 200);
             response.put("message", "매물 데이터를 정상적으로 가져왔습니다.");
             response.put("data", data);
@@ -83,4 +81,9 @@ public class RoomController {
         return response;
 
     }
+
+
+
+
+
 }
