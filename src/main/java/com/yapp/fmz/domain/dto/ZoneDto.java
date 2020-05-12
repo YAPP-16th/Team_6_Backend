@@ -47,9 +47,6 @@ public class ZoneDto implements Comparable<ZoneDto>{
 
     @Override
     public int compareTo(ZoneDto z) {
-        if(this.time > z.time){
-            return 1;
-        }
-        return -1;
+        return this.time.compareTo(z.time);
     }
 }
