@@ -2,6 +2,7 @@ package com.yapp.fmz.controller;
 
 import com.yapp.fmz.domain.Room;
 import com.yapp.fmz.domain.Zone;
+import com.yapp.fmz.domain.dto.RoomDetailDto;
 import com.yapp.fmz.domain.dto.RoomDto;
 import com.yapp.fmz.domain.dto.ZoneDto;
 import com.yapp.fmz.repository.RoomRepository;
@@ -42,7 +43,7 @@ public class RoomController {
         HashMap<String, Object> response = new HashMap<String, Object>();
 
         List<Room> roomList = roomService.findRoomsByMonthlyPayment(zone_id);
-        List<RoomDto> data = roomList.stream().map(name -> new RoomDto(name)).collect(Collectors.toList());
+        List<RoomDetailDto> data = roomList.stream().map(name -> new RoomDetailDto(name)).collect(Collectors.toList());
         if (roomList.size() ==0){
             response.put("code", 300);
             response.put("message", "해당 조건의 매물이 존재하지 않습니다.");
