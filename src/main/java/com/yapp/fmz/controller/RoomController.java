@@ -10,10 +10,7 @@ import com.yapp.fmz.service.ZoneService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -34,6 +31,7 @@ public class RoomController {
     @Autowired
     RoomRepository roomRepository;
 
+    @CrossOrigin("*")
     @ApiOperation(value = "가격순 매물정보", notes = "ZONE ID 기준 가격순 매물 정보입니다.")
     @ApiResponses({
             @ApiResponse(code = 200, message = "매물 데이터를 정상적으로 가져왔습니다."),
@@ -59,6 +57,7 @@ public class RoomController {
 
     }
 
+    @CrossOrigin("*")
     @ApiOperation(value = "등록번호순 매물정보", notes = "ZONE ID 기준 등록번호순 매물 정보입니다.")
     @ApiResponses({
             @ApiResponse(code = 200, message = "매물 데이터를 정상적으로 가져왔습니다."),

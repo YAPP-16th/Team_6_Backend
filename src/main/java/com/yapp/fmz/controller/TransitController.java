@@ -5,6 +5,7 @@ import com.yapp.fmz.service.TransitService;
 import com.yapp.fmz.service.ZoneService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,6 +24,7 @@ public class TransitController {
     @Autowired
     ZoneService zoneService;
 
+    @CrossOrigin("*")
     @ApiOperation(value = "교통 정보", notes = "요청 위치와 ZONE 사이 대중교통 정보를 제공합니다.")
     @ApiResponses({
             @ApiResponse(code = 200, message = "교통 정보를 정상적으로 가져왔습니다."),

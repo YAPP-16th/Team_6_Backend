@@ -39,6 +39,7 @@ public class ZoneController {
         return "Polygon INITIALIZED SUCCESS";
     }
 
+    @CrossOrigin("*")
     @ApiOperation(value = "사용자 선택 기반 추천 기초구역 매물 정보", notes = "사용자 선택에 기반한 추천 기초구역과 기초구역 내 매물 정보입니다.")
     @ApiResponses({
             @ApiResponse(code = 200, message = "기초구역 데이터를 정상적으로 가져왔습니다."),
@@ -73,6 +74,7 @@ public class ZoneController {
         return response;
     }
 
+    @CrossOrigin("*")
     @ApiOperation(value = "기초구역 주변 주거 환경 정보", notes = "기초구역 기준 주거 환경 정보입니다.")
     @ApiResponses({
             @ApiResponse(code = 200, message = "주거 환경 데이터를 정상적으로 가져왔습니다."),
@@ -96,6 +98,7 @@ public class ZoneController {
 
     }
 
+    @CrossOrigin("*")
     @ApiOperation(value = "개발 편의를 위한 사용자 선택 기반 추천 기초구역 매물 정보", notes = "/zones api 한번 수행이 시간과 비용이 많이 소비되어 테스트용으로 만든 api입니다.(Polygon, MultiPolygon 정보 각각 있음)")
     @ApiResponses({
             @ApiResponse(code = 200, message = "기초구역 데이터를 정상적으로 가져왔습니다."),
@@ -134,7 +137,7 @@ public class ZoneController {
         }
         return response;
     }
-
+    
     @ResponseBody
     @GetMapping("/server/test/zones")
     public HashMap<String, Object> testServerRecommendZone(
