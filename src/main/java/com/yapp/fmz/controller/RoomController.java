@@ -2,6 +2,7 @@ package com.yapp.fmz.controller;
 
 import com.yapp.fmz.domain.Room;
 import com.yapp.fmz.domain.Zone;
+import com.yapp.fmz.domain.dto.RoomDetailDto;
 import com.yapp.fmz.domain.dto.RoomDto;
 import com.yapp.fmz.domain.dto.ZoneDto;
 import com.yapp.fmz.repository.RoomRepository;
@@ -39,11 +40,11 @@ public class RoomController {
             @ApiResponse(code = 400, message = "통신에 실패했습니다.")
     })
     @GetMapping("/rooms/byPrice/")
-    public HashMap<String, Object> RoomsByMonthlyPayment(@ApiParam(value = "ZONE ID", required = true, example = "3776") @RequestParam("zoneId") Long zone_id){
+    public HashMap<String, Object> RoomsByMonthlyPayment(@ApiParam(value = "ZONE ID", required = true, example = "6") @RequestParam("zoneId") Long zone_id) throws Exception{
         HashMap<String, Object> response = new HashMap<String, Object>();
 
         List<Room> roomList = roomService.findRoomsByMonthlyPayment(zone_id);
-        List<RoomDto> data = roomList.stream().map(name -> new RoomDto(name)).collect(Collectors.toList());
+        List<RoomDetailDto> data = roomList.stream().map(name -> new RoomDetailDto(name)).collect(Collectors.toList());
         if (roomList.size() ==0){
             response.put("code", 300);
             response.put("message", "해당 조건의 매물이 존재하지 않습니다.");
@@ -52,6 +53,7 @@ public class RoomController {
             response.put("message", "매물 데이터를 정상적으로 가져왔습니다.");
             response.put("data", data);
         }
+
 
         return response;
 
@@ -65,15 +67,15 @@ public class RoomController {
             @ApiResponse(code = 400, message = "통신에 실패했습니다.")
     })
     @GetMapping("/rooms/byRegistration")
-    public HashMap<String, Object> RoomsByRegisterdId(@ApiParam(value = "ZONE ID", required = true, example = "3776") @RequestParam("zoneId") Long zone_id){
+    public HashMap<String, Object> RoomsByRegisterdId(@ApiParam(value = "ZONE ID", required = true, example = "6") @RequestParam("zoneId") Long zone_id){
         HashMap<String, Object> response = new HashMap<String, Object>();
 
         List<Room> roomList = roomService.findRoomsByRegisterdId(zone_id);
-        List<RoomDto> data = roomList.stream().map(name -> new RoomDto(name)).collect(Collectors.toList());
-        if (roomList.size() ==0){
+        List<RoomDetailDto> data = roomList.stream().map(name -> new RoomDetailDto(name)).collect(Collectors.toList());
+        if (roomList.size() == 0) {
             response.put("code", 300);
             response.put("message", "해당 조건의 매물이 존재하지 않습니다.");
-        }else {
+        } else {
             response.put("code", 200);
             response.put("message", "매물 데이터를 정상적으로 가져왔습니다.");
             response.put("data", data);
@@ -82,4 +84,9 @@ public class RoomController {
         return response;
 
     }
+
+
+
+
+
 }

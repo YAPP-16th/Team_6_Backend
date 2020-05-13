@@ -22,6 +22,9 @@ public class Room {
     // 기초구역번호(우편번호)
     private Long zipcode;
 
+    // 이미지
+    private String img;
+
      //매물 주소
     private String address;
 
@@ -31,6 +34,9 @@ public class Room {
 
     // 방 종류(원룸, 투름...)
     private String roomType;
+
+    // 건물 종류(빌라/주택, 아파트 등)
+    private String buildingType;
 
     // 매물 종류(월세, 전세, 매매)
     private String loanType;

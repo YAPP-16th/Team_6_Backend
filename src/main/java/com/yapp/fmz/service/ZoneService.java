@@ -92,48 +92,47 @@ public class ZoneService {
     @Transactional
     public void initialPolygonJsonData() {
 
-        List<Zone> all = zoneRepository.findZonesByType("Multipolygon");
+        List<Zone> all = zoneRepository.findZonesByType("Polygon");
 
         for (Zone zone : all) {
             String type = zone.getType();
             String polygon = zone.getPolygon();
 
             if (type.equals("Polygon")) {
-//                List<List<TestLocationVo>> locationList = new ArrayList<>();
-//
-//                String substring = polygon.substring(10);
-//                String substring1 = substring.substring(0, substring.length() - 2);
-//                System.out.println("substring1 = " + substring1);
-//                String[] split = substring1.split("\\), \\(");
-//
-//                for (int i = 0; i < split.length; i++) {
-//                    String origin = split[i];
-//                    if (i == split.length - 1) {
-//                        origin = split[i].substring(0, split[i].length() - 2);
-//                    }
+                List<List<TestLocationVo>> locationList = new ArrayList<>();
+
+                String substring = polygon.substring(10);
+                String substring1 = substring.substring(0, substring.length() - 2);
+                String[] split = substring1.split("\\), \\(");
+
+                for (int i = 0; i < split.length; i++) {
+                    String origin = split[i];
+                    if (i == split.length - 1) {
+                        origin = split[i].substring(0, split[i].length() - 2);
+                    }
 //                    origin = origin.substring(2);
-//                    String[] originSplit = origin.split(", ");
-//
-//                    List<TestLocationVo> location = new ArrayList<>();
-//                    for (int j = 0; j < originSplit.length; j++) {
-//                        String[] s = originSplit[j].split(" ");
-//
-//                        ProjCoordinate projCoordinate = projectionUtils.transforUtmToLocation(Double.valueOf(s[0]), Double.valueOf(s[1]));
-//                        double x = projCoordinate.x;
-//                        double y = projCoordinate.y;
-//
-//                        location.add(new TestLocationVo(x, y));
-//                    }
-//                    locationList.add(location);
-//                }
-//
-//                String result = "";
-//                try {
-//                    result = new ObjectMapper().writeValueAsString(locationList);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                zone.setPolygonJson(result.toString());
+                    String[] originSplit = origin.split(", ");
+
+                    List<TestLocationVo> location = new ArrayList<>();
+                    for (int j = 0; j < originSplit.length; j++) {
+                        String[] s = originSplit[j].split(" ");
+
+                        ProjCoordinate projCoordinate = projectionUtils.transforUtmToLocation(Double.valueOf(s[0]), Double.valueOf(s[1]));
+                        double x = projCoordinate.x;
+                        double y = projCoordinate.y;
+
+                        location.add(new TestLocationVo(x, y));
+                    }
+                    locationList.add(location);
+                }
+
+                String result = "";
+                try {
+                    result = new ObjectMapper().writeValueAsString(locationList);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                zone.setPolygonJson(result.toString());
 
             } else {
                 List<List<List<TestLocationVo>>> locationList1 = new ArrayList<>();
@@ -187,14 +186,14 @@ public class ZoneService {
 
             }
 
-//            Double lat = zone.getLocation().getLat();
-//            Double lng = zone.getLocation().getLng();
-//
-//            ProjCoordinate projCoordinate = projectionUtils.transforUtmToLocation(lat, lng);
-//            double x = projCoordinate.x;
-//            double y = projCoordinate.y;
-//
-//            zone.setConvertLocation(x, y);
+            Double lat = zone.getLocation().getLat();
+            Double lng = zone.getLocation().getLng();
+
+            ProjCoordinate projCoordinate = projectionUtils.transforUtmToLocation(lat, lng);
+            double x = projCoordinate.x;
+            double y = projCoordinate.y;
+
+            zone.setConvertLocation(x, y);
         }
     }
 
@@ -299,7 +298,6 @@ public class ZoneService {
         List<Zone> testZonesHasRoom = zoneRepository.findTestZonesHasRoom();
         for (Zone zone :
                 testZonesHasRoom) {
-            System.out.println(zone.getId());
             zone.setTime(34L);
         }
         return testZonesHasRoom;
@@ -392,23 +390,6 @@ public class ZoneService {
             }
         }
         return ret;
-
-    }
-
-    public void convertTest() {
-        ProjCoordinate projCoordinate = projectionUtils.transforUtmToLocation(939376.0636528851, 1953415.9097094277);
-        double x = projCoordinate.x;
-        double y = projCoordinate.y;
-
-        System.out.println(x);
-        System.out.println(y);
-
-        ProjCoordinate projCoordinate1 = projectionUtils.transformLocationToUtm(126.81342008881066, 37.57813056002237);
-        double x1 = projCoordinate1.x;
-        double y1 = projCoordinate1.y;
-
-        System.out.println(x1);
-        System.out.println(y1);
 
     }
 }

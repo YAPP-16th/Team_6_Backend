@@ -32,27 +32,23 @@ public class TransitController {
             @ApiResponse(code = 400, message = "통신에 실패했습니다.")
     })
     @GetMapping("/transit")
-    public HashMap<String, Object> test(@ApiParam(value = "위치 lat 좌표", required = true, example = "37.572500") @RequestParam("lat") Double lat,
+    public HashMap<String, Object> Transit(@ApiParam(value = "위치 lat 좌표", required = true, example = "37.572500") @RequestParam("lat") Double lat,
                                         @ApiParam(value = "위치 lng 좌표", required = true, example = "126.820454")@RequestParam("lng") Double lng,
-                                        @ApiParam(value = "zone ID", required = true, example = "3774") @RequestParam("zoneId") Long zondId) throws IOException {
+                                        @ApiParam(value = "zone ID", required = true, example = "3774") @RequestParam("zoneId") Long zondId) throws Exception {
         HashMap<String,Object> result = new HashMap<>();
-        try{
-            ArrayList data = transitService.findTransit(lat,lng,zondId);
 
-            if (data.size()>0){
-                result.put("code",200);
-                result.put("message", "교통 정보를 정상적으로 가져왔습니다.");
-                result.put("data",data);
+        ArrayList data = transitService.findTransit(lat,lng,zondId);
 
-            }else {
-                result.put("code",300);
-                result.put("message", "해당 조건의 경로 정보가 제공되지 않습니다.");
-            }
-        }catch (Exception e) {
-            result.put("code",400);
-            result.put("message", "통신에 실패했습니다.");
-            e.printStackTrace();
+        if (data.size()>0){
+            result.put("code",200);
+            result.put("message", "교통 정보를 정상적으로 가져왔습니다.");
+            result.put("data",data);
+
+        }else {
+            result.put("code",300);
+            result.put("message", "해당 조건의 경로 정보가 제공되지 않습니다.");
         }
+
         return result;
     }
 
