@@ -1,12 +1,10 @@
 package com.yapp.fmz.controller;
 
-import com.yapp.fmz.domain.Room;
+import ch.qos.logback.core.encoder.EchoEncoder;
 import com.yapp.fmz.domain.Zone;
 import com.yapp.fmz.domain.dto.RequestFindZoneDto;
-import com.yapp.fmz.domain.dto.RoomDto;
 import com.yapp.fmz.domain.dto.ZoneDto;
 import com.yapp.fmz.domain.vo.CategoryVo;
-import com.yapp.fmz.domain.vo.PlaceVo;
 import com.yapp.fmz.service.ZoneService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -15,9 +13,13 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.OptimisticLockException;
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -58,8 +60,17 @@ public class ZoneController {
         long time = System.currentTimeMillis();
 
         HashMap<String, Object> response = new HashMap<>();
+        try{
+            RequestFindZoneDto requestFindZoneDto = new RequestFindZoneDto(address, addressTag, transitMode, transferLimit, minTime, maxTime);
+
+        }catch(Exception e){
+            response.put("code", 404);
+            response.put("message", "요청 조건의 형식의 오류가 있습니다.");
+            return response;
+        }
         List<Zone> zones = zoneService.findZones(address, addressTag, transitMode, transferLimit, minTime - 2, maxTime + 2);
         List<ZoneDto> data = zones.stream().map(ZoneDto::new).sorted().collect(toList());
+
         if (data.size() > 0) {
             response.put("code", 200);
             response.put("message", "정상");
@@ -112,15 +123,23 @@ public class ZoneController {
             @RequestParam Long minTime,
             @RequestParam Long maxTime
     ) {
-
-        System.out.println("address = " + address);
-        System.out.println("tag = " + addressTag);
-        System.out.println("transitMode = " + transitMode.toString());
-        System.out.println("transferLimit = " + transferLimit);
-        System.out.println("minTime = " + minTime);
-        System.out.println("maxTime = " + maxTime);
-
         HashMap<String, Object> response = new HashMap<>();
+
+        try {
+            RequestFindZoneDto requestFindZoneDto = new RequestFindZoneDto(address, addressTag, transitMode, transferLimit, minTime, maxTime);
+            Optional.of(requestFindZoneDto.getAddress());
+            Optional.of(requestFindZoneDto.getAddressTag());
+            Optional.of(requestFindZoneDto.getTransitMode().get(0));
+            Optional.of(requestFindZoneDto.getTransferLimit());
+            Optional.of(requestFindZoneDto.getMinTime());
+            Optional.of(requestFindZoneDto.getMaxTime());
+        } catch(Exception e){
+            response.put("code", 404);
+            response.put("message", "size of transitMode is 0");
+            response.put("error_message", e.getMessage());
+            return response;
+        }
+
         List<Zone> zones = zoneService.findTestZones();
         List<ZoneDto> data = zones.stream().map(ZoneDto::new).sorted().collect(toList());
         if (data.size() > 0) {

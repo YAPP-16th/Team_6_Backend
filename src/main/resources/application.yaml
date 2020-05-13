@@ -19,12 +19,35 @@ spring:
 logging.level:
   org.hibernate.SQL: debug
 
-
 spring.datasource.password: findmyzone!
 
+---
 
+spring.profiles: logging-info
+logging:
+  file.path: logs/application.log
+  level:
+    org.springframework.web: INFO
+    org.hibernate.SQL: INFO
+    org.quartz.core: INFO
+    com.mysql.cj.jdbc.Driver: INFO
 
+---
+spring.profiles: logging-debug
+logging:
+  file.path: logs/application.log
+  level:
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.quartz.core: DEBUG
+    com.mysql.cj.jdbc.Driver: DEBUG
 
+---
+spring.profiles: logging-daily
+logging:
+  config: classpath:log/logback-spring.xml
 
-
-#  org.hibernate.type: trace
+---
+spring.profiles: logging-warn
+logging:
+  config: classpath:log/logback-spring-warn.xml

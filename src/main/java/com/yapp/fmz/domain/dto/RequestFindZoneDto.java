@@ -14,4 +14,16 @@ public class RequestFindZoneDto {
     private Long transferLimit;
     private Long minTime;
     private Long maxTime;
+
+    public RequestFindZoneDto() {
+    }
+
+    public RequestFindZoneDto(String address, String addressTag, List<String> transitMode, Long transferLimit, Long minTime, Long maxTime) {
+        this.address = address;
+        this.addressTag = addressTag;
+        this.transitMode = transitMode;
+        this.transferLimit = transferLimit;
+        this.minTime = minTime;
+        this.maxTime = maxTime;
+    }
 }
