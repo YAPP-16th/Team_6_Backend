@@ -16,6 +16,7 @@ public class RoomDetailDto{
         private String buildingType;
         private String loanType;
         private Long deposit;
+        private Long registerId;
         private Long monthlyPayment;
         private Location location;
 
@@ -29,6 +30,7 @@ public class RoomDetailDto{
             this.roomType = room.getRoomType();
             this.loanType = room.getLoanType();
             this.deposit = room.getDeposit();
+            this.registerId = room.getRegisterId();
             this.monthlyPayment = room.getMonthlyPayment();
             this.location = room.getLocation();
         }
