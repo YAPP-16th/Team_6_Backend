@@ -260,13 +260,15 @@ public class GoogleApi {
 
                 JSONObject legObject = (JSONObject) legs.get(0);
                 JSONObject duration = (JSONObject) legObject.get("duration");
+                JSONObject distance = (JSONObject) legObject.get("distance");
                 Long duration_value;
 
-                if(duration == null){
+                if(duration == null || distance ==null){
                     continue;
                 }else{
                     duration_value = (Long) duration.get("value") / 60;
                     tmp.put("time",duration_value );
+                    tmp.put("distance", distance);
                 }
 
                 JSONArray steps = (JSONArray) legObject.get("steps");
