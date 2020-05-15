@@ -85,8 +85,11 @@ public class RoomController {
 
     }
 
-
-
-
+    @GetMapping("/remove")
+    public List<String> testRemove(){
+        List<Room> rooms = roomService.removeTrashRooms();
+        String url = "https://www.peterpanz.com/house/";
+        return rooms.stream().map(room -> url + room.getRegisterId()).collect(toList());
+    }
 
 }
