@@ -233,6 +233,7 @@ public class GoogleApi {
                 .queryParam("origin", inputLocation.getY().toString() + ',' + inputLocation.getX().toString())
                 .queryParam("destination", outputLocation.getY().toString() + ',' + outputLocation.getX().toString())
                 .queryParam("mode", "transit")
+                .queryParam("departure_time", 1589518800 )
                 .queryParam("language", "ko")
                 .queryParam("alternatives", "true")
                 .queryParam("key", auth);
@@ -315,4 +316,4 @@ public class GoogleApi {
     }
 
 
-    }
+}

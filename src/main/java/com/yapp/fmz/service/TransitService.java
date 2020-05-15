@@ -21,7 +21,7 @@ public class TransitService {
     TransitRepository transitRepository;
 
 
-    public ArrayList findTransit(Double x, Double y,Long zoneId) throws IOException {
+    public ArrayList findTransitbyDestinationZoneId(Double x, Double y,Long zoneId) throws IOException {
 
         LocationVo orgin = new LocationVo(y, x);
         Location location  = transitRepository.findLocationByZoneId(zoneId);
@@ -29,6 +29,25 @@ public class TransitService {
         LocationVo destination = new LocationVo(transformLocation.x, transformLocation.y);
 
         return googleAPI.findTransport(orgin,destination);
+
+    }
+    public ArrayList findTransitbyStartZoneId(Long zoneId, Double x, Double y) throws IOException {
+
+        LocationVo destination = new LocationVo(y, x);
+        Location location  = transitRepository.findLocationByZoneId(zoneId);
+        ProjCoordinate transformLocation = transformUtmToLocation( location.getLat(),location.getLng());
+        LocationVo origin = new LocationVo(transformLocation.x, transformLocation.y);
+
+        return googleAPI.findTransport(origin,destination);
+
+    }
+
+    public ArrayList findTransitbyLocation(Double x, Double y,Double w, Double z) throws IOException {
+
+        LocationVo origin = new LocationVo(y, x);
+        LocationVo destination = new LocationVo(z, w);
+
+        return googleAPI.findTransport(origin,destination);
 
     }
 
