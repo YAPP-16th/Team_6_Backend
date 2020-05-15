@@ -169,7 +169,7 @@ public class ZoneController {
     ) {
 
         HashMap<String, Object> response = new HashMap<>();
-        List<Zone> zones = zoneService.findOnlyRecommendZones(address, addressTag, transitMode, transferLimit, minTime - 2, maxTime + 2);
+        List<Zone> zones = zoneService.findOnlyRecommendZones(address);
         List<ZoneDto> data = zones.stream().map(ZoneDto::new).sorted().collect(toList());
         if (data.size() > 0) {
             response.put("code", 200);
