@@ -111,7 +111,7 @@ public class KakaoApi {
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl)
                     .queryParam("x", location.getX().toString())
                     .queryParam("y", location.getY().toString())
-                    .queryParam("radius", 2000)
+                    .queryParam("radius", 1000)
                     .queryParam("category_group_code", category.toString());
 
             HttpHeaders httpHeaders = new HttpHeaders();
