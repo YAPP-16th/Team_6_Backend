@@ -7,6 +7,7 @@ import com.yapp.fmz.repository.ZoneRepository;
 import com.yapp.fmz.utils.PeterApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ public class RoomService {
         return roomRepository.findRoomsByZoneOrderByRegisterId(zone_id);
     }
 
+    @Scheduled(cron="0 0 4 * * ?")
     @CacheEvict("zoneHasRoomQuery")
     public List<Room> removeTrashRooms(){
         int totalCount = 0;
