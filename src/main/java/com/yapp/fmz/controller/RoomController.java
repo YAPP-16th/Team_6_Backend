@@ -89,13 +89,13 @@ public class RoomController {
     }
 
     @GetMapping("/remove")
-    public List<String> testRemove(){
-        List<Room> rooms = roomService.removeTrashRooms();
+    public String testRemove(){
+        roomService.removeTrashRooms();
+
         String address = "서울특별시 강남구 역삼동 테헤란로48길 10";
         zoneService.findOnlyRecommendZones(address);
 
-        String url = "https://www.peterpanz.com/house/";
-        return rooms.stream().map(room -> url + room.getRegisterId()).collect(toList());
+        return "완료";
     }
 
 }

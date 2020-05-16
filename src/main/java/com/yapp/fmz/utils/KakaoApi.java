@@ -148,5 +148,26 @@ public class KakaoApi {
 
         return null;
     }
+
+    public void sendKakaoMessage(String message){
+
+        String apiUrl = "https://hooks.slack.com/services/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";
+
+        RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
+        RestTemplate restTemplate = restTemplateBuilder.build();
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("text", message);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set(HttpHeaders.ACCEPT, "application/json");
+        httpHeaders.set(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded;charset=utf-8");
+
+        HttpEntity<?> httpEntity = new HttpEntity<>(requestObject.toString(), httpHeaders);
+        ResponseEntity<String> resultMap =restTemplate.exchange(builder.build(true).toUri(), HttpMethod.POST, httpEntity, String.class);
+
+        System.out.println(resultMap.getBody().toString());
+    }
 }
 
