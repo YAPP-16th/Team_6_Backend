@@ -303,8 +303,7 @@ public class ZoneService {
         }
         return testZonesHasRoom;
     }
-
-    @PostConstruct
+    
     public List<Zone> findOnlyRecommendZones(String address) {
 //         주소->좌표 변환
         HashMap<String, String> location = kakaoAPI.convertAddressToLocation(address);
