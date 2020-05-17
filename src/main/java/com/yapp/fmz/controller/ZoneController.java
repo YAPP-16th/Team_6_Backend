@@ -1,6 +1,5 @@
 package com.yapp.fmz.controller;
 
-import ch.qos.logback.core.encoder.EchoEncoder;
 import com.yapp.fmz.domain.Zone;
 import com.yapp.fmz.domain.dto.RequestFindZoneDto;
 import com.yapp.fmz.domain.dto.ZoneDto;
@@ -13,13 +12,9 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.OptimisticLockException;
-import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
