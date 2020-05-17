@@ -10,10 +10,8 @@ import com.yapp.fmz.service.RoomService;
 import com.yapp.fmz.service.ZoneService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -97,5 +95,4 @@ public class RoomController {
 
         return "완료";
     }
-
 }
