@@ -1,25 +1,17 @@
 package com.yapp.fmz.controller;
 
 import com.yapp.fmz.domain.Room;
-import com.yapp.fmz.domain.Zone;
 import com.yapp.fmz.domain.dto.RoomDetailDto;
-import com.yapp.fmz.domain.dto.RoomDto;
-import com.yapp.fmz.domain.dto.ZoneDto;
 import com.yapp.fmz.repository.RoomRepository;
 import com.yapp.fmz.service.RoomService;
 import com.yapp.fmz.service.ZoneService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
 
 
 @RestController
@@ -97,5 +89,4 @@ public class RoomController {
 
         return "완료";
     }
-
 }

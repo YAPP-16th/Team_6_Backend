@@ -1,19 +1,8 @@
 package com.yapp.fmz.controller;
 
-import com.yapp.fmz.domain.Zone;
-import com.yapp.fmz.domain.dto.ZoneDto;
 import com.yapp.fmz.service.ZoneService;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.web.bind.annotation.GetMapping;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.Assert.*;
 
 @SpringBootTest
 class ZoneControllerTest {

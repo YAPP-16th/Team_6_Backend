@@ -4,7 +4,6 @@ import com.yapp.fmz.domain.Address;
 import com.yapp.fmz.domain.Location;
 import com.yapp.fmz.domain.Zone;
 import lombok.Data;
-import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import java.util.ArrayList;

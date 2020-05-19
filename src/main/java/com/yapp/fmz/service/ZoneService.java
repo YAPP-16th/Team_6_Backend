@@ -1,7 +1,6 @@
 package com.yapp.fmz.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yapp.fmz.domain.Location;
 import com.yapp.fmz.domain.Room;
 import com.yapp.fmz.domain.Zone;
 import com.yapp.fmz.domain.enu.Category;
@@ -13,16 +12,11 @@ import com.yapp.fmz.repository.ZoneRepository;
 import com.yapp.fmz.utils.GoogleApi;
 import com.yapp.fmz.utils.KakaoApi;
 import com.yapp.fmz.utils.ProjectionUtils;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.junit.Test;
 import org.osgeo.proj4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +24,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Service
-public class ZoneService {
+public class ZoneService implements CommandLineRunner {
     @Autowired
     ZoneRepository zoneRepository;
     @Autowired
@@ -303,7 +297,7 @@ public class ZoneService {
         }
         return testZonesHasRoom;
     }
-    
+  
     public List<Zone> findOnlyRecommendZones(String address) {
 //         주소->좌표 변환
         HashMap<String, String> location = kakaoAPI.convertAddressToLocation(address);
@@ -392,5 +386,11 @@ public class ZoneService {
         }
         return ret;
 
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        String address = "서울특별시 강남구 역삼동 테헤란로48길 10";
+        findOnlyRecommendZones(address);
     }
 }
