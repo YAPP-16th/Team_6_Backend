@@ -1,4 +1,4 @@
-package com.yapp.fmz;
+package com.yapp.batch;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,17 +8,15 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import javax.annotation.PostConstruct;
 import java.util.concurrent.Executor;
 
 @SpringBootApplication
 @EnableAsync
-@EnableCaching
 @EnableScheduling
-public class FmzApplication {
+public class BatchApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(FmzApplication.class, args);
+		SpringApplication.run(BatchApplication.class, args);
 	}
 
 	@Bean
@@ -31,6 +29,4 @@ public class FmzApplication {
 		executor.initialize();
 		return executor;
 	}
-
-
 }
