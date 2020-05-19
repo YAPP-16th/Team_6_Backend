@@ -297,7 +297,7 @@ public class ZoneService implements CommandLineRunner {
         }
         return testZonesHasRoom;
     }
-
+  
     public List<Zone> findOnlyRecommendZones(String address) {
 //         주소->좌표 변환
         HashMap<String, String> location = kakaoAPI.convertAddressToLocation(address);

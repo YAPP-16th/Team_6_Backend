@@ -100,47 +100,63 @@ public class KakaoApi {
             CategoryVo categoryVo;
             List<PlaceVo> placeList = new ArrayList<>();
             String apiUrl = "https://dapi.kakao.com/v2/local/search/category.json";
+            int page = 0;
+            boolean isEnd = false;
 
-            RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
-            RestTemplate restTemplate = restTemplateBuilder.build();
-
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl)
-                    .queryParam("x", location.getX().toString())
-                    .queryParam("y", location.getY().toString())
-                    .queryParam("radius", 1000)
-                    .queryParam("category_group_code", category.toString());
-
-            HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-            httpHeaders.set(HttpHeaders.AUTHORIZATION, auth);
-
-            HttpEntity<?> httpEntity = new HttpEntity<>(httpHeaders);
-            ResponseEntity<String> resultMap =restTemplate.exchange(builder.build(true).toUri(), HttpMethod.GET, httpEntity, String.class);
-
-            System.out.println(resultMap.getBody().toString());
-            JSONParser jsonParser = new JSONParser();
-            JSONObject result = (JSONObject)jsonParser.parse(resultMap.getBody().toString());
-            JSONObject meta = (JSONObject)result.get("meta");
-            Long totalCount = (Long) meta.get("total_count");
-
-            JSONArray documents = (JSONArray)result.get("documents");
             String objectCategorName = "";
-            for(int i=0; i<documents.size(); i++){
-                JSONObject documentObject = (JSONObject) documents.get(i);
-                objectCategorName = (String) documentObject.get("category_group_name");
-                String objectPlaceName = (String) documentObject.get("place_name");
-                String objectAddress = (String) documentObject.get("address_name");
-                String objectDistance = (String) documentObject.get("distance");
+            Long totalCount = 0L;
 
-                placeList.add(new PlaceVo(objectCategorName, objectPlaceName, objectAddress, objectDistance));
+            while(!isEnd){
+                page++;
+
+                RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
+                RestTemplate restTemplate = restTemplateBuilder.build();
+
+                UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl)
+                        .queryParam("x", location.getX().toString())
+                        .queryParam("y", location.getY().toString())
+                        .queryParam("radius", 1000)
+                        .queryParam("category_group_code", category.toString())
+                        .queryParam("page", page)
+                        .queryParam("sort", "distance");
+
+                HttpHeaders httpHeaders = new HttpHeaders();
+                httpHeaders.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+                httpHeaders.set(HttpHeaders.AUTHORIZATION, auth);
+
+                HttpEntity<?> httpEntity = new HttpEntity<>(httpHeaders);
+                ResponseEntity<String> resultMap =restTemplate.exchange(builder.build(true).toUri(), HttpMethod.GET, httpEntity, String.class);
+
+                System.out.println(resultMap.getBody().toString());
+                JSONParser jsonParser = new JSONParser();
+                JSONObject result = (JSONObject)jsonParser.parse(resultMap.getBody().toString());
+                JSONObject meta = (JSONObject)result.get("meta");
+                totalCount = (Long) meta.get("total_count");
+                isEnd = (boolean) meta.get("is_end");
+
+                JSONArray documents = (JSONArray)result.get("documents");
+                for(int i=0; i<documents.size(); i++){
+                    JSONObject documentObject = (JSONObject) documents.get(i);
+                    objectCategorName = (String) documentObject.get("category_group_name");
+                    String objectPlaceName = (String) documentObject.get("place_name");
+                    String objectAddress = (String) documentObject.get("address_name");
+                    String objectDistance = (String) documentObject.get("distance");
+                    String objectUrl = (String) documentObject.get("place_url");
+
+
+                    placeList.add(new PlaceVo(objectCategorName, objectPlaceName, objectAddress, objectDistance, objectUrl));
+                }
+
             }
             categoryVo = new CategoryVo(objectCategorName, totalCount, placeList);
-
             return categoryVo;
         }
         catch(Exception e){
             e.printStackTrace();
         }
+
+
+
 
         return null;
     }

@@ -10,4 +10,5 @@ public class PlaceVo {
     private String placeName;
     private String address;
     private String distance;
+    private String placeUrl;
 }
