@@ -163,7 +163,7 @@ public class KakaoApi {
 
     public void sendKakaoMessage(String message){
 
-        String apiUrl = "https://hooks.slack.com/services/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";
+        String apiUrl = "https://hooks.slack.com/services/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";
 
         RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
         RestTemplate restTemplate = restTemplateBuilder.build();
