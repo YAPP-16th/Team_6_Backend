@@ -35,6 +35,9 @@ public class Zone {
     @OneToMany(mappedBy = "zone")
     private List<Room> rooms = new ArrayList<>();
 
+    private Double x;
+    private Double y;
+
     @Transient
     private Long time;
 
@@ -48,7 +51,7 @@ public class Zone {
     }
 
     public void setConvertLocation(Double x, Double y){
-        this.address.setX(x);
-        this.address.setY(y);
+        this.setX(x);
+        this.setY(y);
     }
 }

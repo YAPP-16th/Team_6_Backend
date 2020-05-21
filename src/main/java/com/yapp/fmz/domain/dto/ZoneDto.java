@@ -23,6 +23,7 @@ public class ZoneDto implements Comparable<ZoneDto>{
     private List<RoomDto> rooms = new ArrayList<>();
     private Object polygon;
 
+
     public ZoneDto(Zone zone) {
         try{
             JSONParser jsonParser = new JSONParser();

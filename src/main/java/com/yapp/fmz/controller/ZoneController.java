@@ -4,7 +4,9 @@ import com.yapp.fmz.domain.Zone;
 import com.yapp.fmz.domain.dto.RequestFindZoneDto;
 import com.yapp.fmz.domain.dto.ZoneDto;
 import com.yapp.fmz.domain.vo.CategoryVo;
+import com.yapp.fmz.domain.vo.LocationVo;
 import com.yapp.fmz.service.ZoneService;
+import com.yapp.fmz.utils.KakaoApi;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -12,9 +14,7 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -22,6 +22,9 @@ import static java.util.stream.Collectors.toList;
 public class ZoneController {
     @Autowired
     ZoneService zoneService;
+
+    @Autowired
+    KakaoApi kakaoAPI;
 
     @GetMapping("/init")
     public String init() {
@@ -64,12 +67,19 @@ public class ZoneController {
             response.put("message", "요청 조건의 형식의 오류가 있습니다.");
             return response;
         }
-        List<Zone> zones = zoneService.findZones(address, addressTag, transitMode, transferLimit, minTime - 2, maxTime + 2);
+        //         주소->좌표 변환
+        HashMap<String, String> location = kakaoAPI.convertAddressToLocation(address);
+        Double x = Double.parseDouble(location.get("x"));
+        Double y = Double.parseDouble(location.get("y"));
+        LocationVo locationVo = new LocationVo(x, y);
+
+        List<Zone> zones = zoneService.findZones(locationVo, addressTag, transitMode, transferLimit, minTime - 2, maxTime + 2);
         List<ZoneDto> data = zones.stream().map(ZoneDto::new).sorted().collect(toList());
 
         if (data.size() > 0) {
             response.put("code", 200);
             response.put("message", "정상");
+            response.put("inputLocation", locationVo);
             response.put("data", data);
 
         } else {
@@ -149,12 +159,18 @@ public class ZoneController {
             response.put("error_message", e.getMessage());
             return response;
         }
+        //         주소->좌표 변환
+        HashMap<String, String> location = kakaoAPI.convertAddressToLocation(address);
+        Double x = Double.parseDouble(location.get("x"));
+        Double y = Double.parseDouble(location.get("y"));
+        LocationVo locationVo = new LocationVo(x, y);
 
         List<Zone> zones = zoneService.findTestZones();
         List<ZoneDto> data = zones.stream().map(ZoneDto::new).sorted().collect(toList());
         if (data.size() > 0) {
             response.put("code", 200);
             response.put("message", "정상");
+            response.put("inputLocation", locationVo);
             response.put("data", data);
 
         } else {

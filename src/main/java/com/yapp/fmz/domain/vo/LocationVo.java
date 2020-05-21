@@ -6,7 +6,6 @@ import lombok.Data;
 public class LocationVo {
     private Double x;
     private Double y;
-    private Long time;
 
     public LocationVo(Double x, Double y) {
         this.x = x;

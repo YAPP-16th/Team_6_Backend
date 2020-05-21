@@ -192,13 +192,11 @@ public class ZoneService implements CommandLineRunner {
         }
     }
 
-    public List<Zone> findZones(String address, String tag, List<String> transitMode, Long transferLimit, Long minTime, Long maxTime) {
+    public List<Zone> findZones(LocationVo address, String tag, List<String> transitMode, Long transferLimit, Long minTime, Long maxTime) {
 //         주소->좌표 변환
-        HashMap<String, String> location = kakaoAPI.convertAddressToLocation(address);
-        Double x = Double.parseDouble(location.get("x"));
-        Double y = Double.parseDouble(location.get("y"));
+        Double x = address.getX();
+        Double y = address.getY();
         LocationVo parsedLocation = new LocationVo(x, y);
-        // 카카오 api 좌표 변환 오류!
 
 //         좌표->좌표 변환
         long transStart = System.currentTimeMillis();
