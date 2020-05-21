@@ -5,7 +5,6 @@ import com.yapp.fmz.domain.Location;
 import com.yapp.fmz.domain.Zone;
 import lombok.Data;
 import org.json.simple.parser.JSONParser;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +29,7 @@ public class ZoneDto implements Comparable<ZoneDto>{
             this.id = zone.getId();
             this.zipcode = zone.getZipcode();
             this.address = zone.getAddress();
-            this.location = zone.getLocation();
+            this.location = new Location(zone.getY(), zone.getX());
             this.time = zone.getTime();
             this.distance = zone.getDistance();
             this.polygon = jsonParser.parse(zone.getPolygonJson());
