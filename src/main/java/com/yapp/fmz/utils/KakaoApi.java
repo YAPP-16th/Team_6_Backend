@@ -22,6 +22,7 @@ import java.util.List;
 @Component
 public class KakaoApi {
     private String auth =  System.getenv("KAKAO_API_KEY");
+    private String apiUrl = System.getenv("SLACK_API_URL");
 
     public HashMap<String, String> convertAddressToLocation(String address){
         try{
@@ -162,9 +163,6 @@ public class KakaoApi {
     }
 
     public void sendKakaoMessage(String message){
-
-        String apiUrl = "https://hooks.slack.com/services/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";
-
         RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
         RestTemplate restTemplate = restTemplateBuilder.build();
 

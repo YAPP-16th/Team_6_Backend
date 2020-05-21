@@ -355,6 +355,11 @@ public class ZoneService implements CommandLineRunner {
         return categoryVoList;
     }
 
+    public void sendMessage(){
+        String message = "안녕";
+        kakaoAPI.sendKakaoMessage(message);
+    }
+
 
     private static <T> List<List<T>> partition(List<T> resList, int count) {
         if (resList == null || count < 1)

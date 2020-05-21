@@ -177,4 +177,10 @@ public class ZoneController {
         }
         return response;
     }
+
+    @GetMapping("/test/message")
+    public String sendMessage(){
+        zoneService.sendMessage();
+        return "전송 완료";
+    }
 }
