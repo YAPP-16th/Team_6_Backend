@@ -105,6 +105,18 @@ public class ZoneController {
     }
 
     @CrossOrigin("*")
+    @ApiOperation(value = "String 형태의 Message", notes = "개발 과정에서 생기는 스트레스를 해소하기 위한 익명 메시지 Api, 욕을 보내시면 익명으로 저의 슬랙으로 전송됩니다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "메시지를 정상적으로 가져왔습니다."),
+            @ApiResponse(code = 400, message = "너무 심한 욕입니다.")
+    })
+    @GetMapping("/test/message")
+    public String sendMessage(@RequestParam String message){
+        zoneService.sendMessage(message);
+        return "전송 완료";
+    }
+
+    @CrossOrigin("*")
     @ApiOperation(value = "개발 편의를 위한 사용자 선택 기반 추천 기초구역 매물 정보", notes = "/zones api 한번 수행이 시간과 비용이 많이 소비되어 테스트용으로 만든 api입니다.(Polygon, MultiPolygon 정보 각각 있음)")
     @ApiResponses({
             @ApiResponse(code = 200, message = "기초구역 데이터를 정상적으로 가져왔습니다."),
@@ -176,11 +188,5 @@ public class ZoneController {
             response.put("message", "해당 조건의 기초구역이 존재하지 않습니다.");
         }
         return response;
-    }
-
-    @GetMapping("/test/message")
-    public String sendMessage(){
-        zoneService.sendMessage();
-        return "전송 완료";
     }
 }

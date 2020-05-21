@@ -359,8 +359,7 @@ public class ZoneService implements CommandLineRunner {
         return categoryVoList;
     }
 
-    public void sendMessage(){
-        String message = "안녕";
+    public void sendMessage(String message){
         kakaoAPI.sendKakaoMessage(message);
     }
 
