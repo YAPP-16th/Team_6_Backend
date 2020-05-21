@@ -12,7 +12,7 @@ import java.util.List;
 public interface ZoneRepository extends JpaRepository<Zone, Long>, ZoneRepositoryCustom {
 
     @Query(value = "SELECT *, MAX(r.room_id) FROM zone AS z inner JOIN room AS r ON r.zipcode = z.zipcode GROUP BY z.zipcode", nativeQuery = true)
-    public List<Zone> findZonesHasRoom();
+    public List<Zone> findZonesHasRoomV1();
 
     @Query(value = "SELECT distinct z from Zone z join fetch z.rooms Where size(z.rooms) >=1")
     public List<Zone> findZonesHasRoomV2();

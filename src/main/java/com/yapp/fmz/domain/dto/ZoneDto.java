@@ -18,11 +18,10 @@ public class ZoneDto implements Comparable<ZoneDto>{
     private Long zipcode;
     private Address address;
     private Location location;
-    private Double x;
-    private Double y;
-    private Object polygon;
     private Long time;
+    private Long distance;
     private List<RoomDto> rooms = new ArrayList<>();
+    private Object polygon;
 
     public ZoneDto(Zone zone) {
         try{
@@ -31,10 +30,9 @@ public class ZoneDto implements Comparable<ZoneDto>{
             this.zipcode = zone.getZipcode();
             this.address = zone.getAddress();
             this.location = zone.getLocation();
-            this.x = zone.getX();
-            this.y = zone.getY();
-            this.polygon = jsonParser.parse(zone.getPolygonJson());
             this.time = zone.getTime();
+            this.distance = zone.getDistance();
+            this.polygon = jsonParser.parse(zone.getPolygonJson());
             this.rooms = zone.getRooms().stream()
                     .map(RoomDto::new)
                     .collect(toList());

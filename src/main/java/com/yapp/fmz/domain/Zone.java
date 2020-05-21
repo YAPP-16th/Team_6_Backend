@@ -32,14 +32,14 @@ public class Zone {
 
     private String polygonJson;
 
-    private Double x;
-    private Double y;
-
     @OneToMany(mappedBy = "zone")
     private List<Room> rooms = new ArrayList<>();
 
     @Transient
     private Long time;
+
+    @Transient
+    private Long distance;
 
     public void setFullAddress(String address){
         Address address1 = this.getAddress();
@@ -48,7 +48,7 @@ public class Zone {
     }
 
     public void setConvertLocation(Double x, Double y){
-        this.setX(x);
-        this.setY(y);
+        this.address.setX(x);
+        this.address.setY(y);
     }
 }

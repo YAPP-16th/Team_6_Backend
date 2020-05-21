@@ -219,11 +219,14 @@ public class ZoneService implements CommandLineRunner {
             Double ty = all.get(i).getLocation().getLng();
 
 //             거리 계산
-            Double length = Math.sqrt(Math.pow(Math.abs(tx - trans.x), 2) + Math.pow(Math.abs(ty - trans.y), 2)) / 1000;
+            Double length = Math.sqrt(Math.pow(Math.abs(tx - trans.x), 2) + Math.pow(Math.abs(ty - trans.y), 2));
+            Double km = length / 1000;
 
 //             30분 거리 필터링
-            if (length >= 0 && length <= 20) {
-                recommend.add(all.get(i));
+            if (km >= 0 && km <= 20) {
+                Zone zone = all.get(i);
+                zone.setDistance(length.longValue());
+                recommend.add(zone);
             }
         }
         System.out.println("거리 필터링 수행시간: " + (System.currentTimeMillis() - lengthStart) / 1000 + "초");
@@ -294,6 +297,7 @@ public class ZoneService implements CommandLineRunner {
         for (Zone zone :
                 testZonesHasRoom) {
             zone.setTime(34L);
+            zone.setDistance(34L);
         }
         return testZonesHasRoom;
     }
