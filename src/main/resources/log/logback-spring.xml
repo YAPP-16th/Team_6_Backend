@@ -26,7 +26,7 @@
             <maxHistory>30</maxHistory>
         </rollingPolicy>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>WARN</level>
+            <level>ERROR</level>
         </filter>
 
         <encoder>
@@ -37,7 +37,7 @@
     <logger name="org.hibernate.SQL" level="INFO"/>
     <logger name="org.quartz.core" level="INFO"/>
 
-    <root level="WARN">
+    <root level="ERROR">
         <appender-ref ref="dailyWarnRollingFileAppender" />
     </root>
     <root level="INFO">
