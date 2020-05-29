@@ -26,7 +26,7 @@ public class FmzApplication {
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 		executor.setCorePoolSize(200); //8
 		executor.setMaxPoolSize(200); // 8
-		executor.setQueueCapacity(60000); // 5000
+		executor.setQueueCapacity(80000); // 5000
 		executor.setThreadNamePrefix("GithubLookup-");
 		executor.initialize();
 		return executor;
