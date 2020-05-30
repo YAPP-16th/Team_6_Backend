@@ -17,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
@@ -216,6 +217,9 @@ public class GoogleApi {
     public ArrayList findTransport(LocationVo inputLocation, LocationVo outputLocation) throws JsonProcessingException {
 
         ArrayList result = new ArrayList();
+        Long now = new Date().getTime();
+        Long tomorrow = now - now % (24 * 60 * 60 * 1000) +5 * 60 * 60 * 1000;
+        Long time = tomorrow/1000;
 
         RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
         restTemplateBuilder.setBufferRequestBody(false);
@@ -227,7 +231,7 @@ public class GoogleApi {
                 .queryParam("origin", inputLocation.getY().toString() + ',' + inputLocation.getX().toString())
                 .queryParam("destination", outputLocation.getY().toString() + ',' + outputLocation.getX().toString())
                 .queryParam("mode", "transit")
-                .queryParam("departure_time", 1589518800 )
+                .queryParam("departure_time", time )
                 .queryParam("language", "ko")
                 .queryParam("alternatives", "true")
                 .queryParam("key", auth);
@@ -242,6 +246,7 @@ public class GoogleApi {
 
             JSONParser jsonParse = new JSONParser();
             JSONObject jsonObj = (JSONObject) jsonParse.parse(resultMap.getBody());
+            System.out.println(resultMap.getBody());
             JSONArray routes = (JSONArray)jsonObj.get("routes");
 
             for (int i=0; i<routes.size(); i++) {
