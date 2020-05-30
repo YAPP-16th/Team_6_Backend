@@ -246,7 +246,6 @@ public class GoogleApi {
 
             JSONParser jsonParse = new JSONParser();
             JSONObject jsonObj = (JSONObject) jsonParse.parse(resultMap.getBody());
-            System.out.println(resultMap.getBody());
             JSONArray routes = (JSONArray)jsonObj.get("routes");
 
             for (int i=0; i<routes.size(); i++) {
