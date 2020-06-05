@@ -214,13 +214,16 @@ public class GoogleApi {
     }
 
 
+
     public ArrayList findTransport(LocationVo inputLocation, LocationVo outputLocation) throws JsonProcessingException {
 
         ArrayList result = new ArrayList();
         Long now = new Date().getTime();
         Long tomorrow = now - now % (24 * 60 * 60 * 1000) +5 * 60 * 60 * 1000;
         Long time = tomorrow/1000;
-
+        double distanceKm = DistanceByDegree(inputLocation.getY(), inputLocation.getX(), outputLocation.getY(), outputLocation.getX());
+        String origin = inputLocation.getY().toString() + ',' + inputLocation.getX().toString();
+        String destination = outputLocation.getY().toString() + ',' + outputLocation.getX().toString();
         RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
         restTemplateBuilder.setBufferRequestBody(false);
         RestTemplate restTemplate = restTemplateBuilder.build();
@@ -228,8 +231,8 @@ public class GoogleApi {
         String url ="https://maps.googleapis.com/maps/api/directions/json";
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
-                .queryParam("origin", inputLocation.getY().toString() + ',' + inputLocation.getX().toString())
-                .queryParam("destination", outputLocation.getY().toString() + ',' + outputLocation.getX().toString())
+                .queryParam("origin", origin)
+                .queryParam("destination", destination)
                 .queryParam("mode", "transit")
                 .queryParam("departure_time", time )
                 .queryParam("language", "ko")
@@ -259,7 +262,8 @@ public class GoogleApi {
 
                 JSONObject legObject = (JSONObject) legs.get(0);
                 JSONObject duration = (JSONObject) legObject.get("duration");
-                JSONObject distance = (JSONObject) legObject.get("distance");
+                HashMap<String,Object> distance = new HashMap<>();
+                distance.put("text",String.format("%.2f", distanceKm) + " km" );
                 Long duration_value;
 
                 if(duration == null || distance ==null){
@@ -311,6 +315,29 @@ public class GoogleApi {
 
         return result;
 
+    }
+    //좌표간 거리 계산
+    public double DistanceByDegree(double lat1, double lng1, double lat2, double lng2){
+        double theta, dist;
+        theta = lng1 - lng2;
+        dist = Math.sin(DegreeToRadian(lat1)) * Math.sin(DegreeToRadian(lat2)) + Math.cos(DegreeToRadian(lat1))
+                * Math.cos(DegreeToRadian(lat2)) * Math.cos(DegreeToRadian(theta));
+        dist = Math.acos(dist);
+        dist = RadianToDegree(dist);
+
+        dist = dist * 60 * 1.1515;
+        dist = dist * 1.609344;    // 단위 mile 에서 km 변환.
+
+        return dist;
+    }
+    //degree->radian 변환
+    public double DegreeToRadian(double degree){
+        return degree * Math.PI / 180.0;
+    }
+
+    //randian -> degree 변환
+    public double RadianToDegree(double radian){
+        return radian * 180d / Math.PI;
     }
 
 
