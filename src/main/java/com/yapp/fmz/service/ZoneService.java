@@ -35,8 +35,6 @@ public class ZoneService implements CommandLineRunner {
     GoogleApi googleAPI;
     @Autowired
     ProjectionUtils projectionUtils;
-//    @Autowired
-//    SearchRepositoy searchRepositoy;
 
     @Transactional
     public void initialZoneToRoomData() {
@@ -221,14 +219,14 @@ public class ZoneService implements CommandLineRunner {
             Double km = length / 1000;
 
 //             30분 거리 필터링
-            if (km >= 0 && km <= 20) {
+            if (km >= 0 && km <= 10) {
                 Zone zone = all.get(i);
                 zone.setDistance(length.longValue());
                 recommend.add(zone);
             }
         }
         System.out.println("거리 필터링 수행시간: " + (System.currentTimeMillis() - lengthStart) / 1000 + "초");
-        System.out.println("매물 있고 거리가 30KM 이하인 기초구역 리스트: " + recommend.size());
+        System.out.println("매물 있고 거리가 10KM 이하인 기초구역 리스트: " + recommend.size());
 
         long apiStart = System.currentTimeMillis();
         ArrayList<Zone> recommendLocationList = new ArrayList<>();
@@ -329,11 +327,11 @@ public class ZoneService implements CommandLineRunner {
             Double length = Math.sqrt(Math.pow(Math.abs(tx - trans.x), 2) + Math.pow(Math.abs(ty - trans.y), 2)) / 1000;
 
 //             30분 거리 필터링
-            if (length >= 0 && length <= 20) {
+            if (length >= 0 && length <= 10) {
                 recommend.add(all.get(i));
             }
         }
-        System.out.println("매물 있고 거리가 20KM 이하인 기초구역 리스트: " + recommend.size());
+        System.out.println("매물 있고 거리가 10KM 이하인 기초구역 리스트: " + recommend.size());
         System.out.println("거리 필터링 수행시간: " + (System.currentTimeMillis() - lengthStart) / 1000 + "초");
 
         return recommend;
