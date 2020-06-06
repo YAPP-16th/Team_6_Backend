@@ -26,17 +26,22 @@ public class ZoneController {
     @Autowired
     KakaoApi kakaoAPI;
 
-    @GetMapping("/init")
-    public String init() {
+    @GetMapping("/db/init/room/mapping")
+    public String initZoneToRoomMaping() {
         zoneService.initialZoneToRoomData();
-        zoneService.initialAddressData();
-        return "DB INITIALIZED SUCCESS";
+        return "DB (Zone To Room) Maping INITIALIZED SUCCESS";
     }
 
-    @GetMapping("/init/polygon")
+    @GetMapping("/db/init/zone/address")
+    public String initZone() {
+        zoneService.initialAddressData();
+        return "DB Zone Address INITIALIZED SUCCESS";
+    }
+
+    @GetMapping("/db/init/zone/polygon")
     public String initPolygon() {
         zoneService.initialPolygonJsonData();
-        return "Polygon INITIALIZED SUCCESS";
+        return "DB Zone Polygon INITIALIZED SUCCESS";
     }
 
     @CrossOrigin("*")
@@ -85,6 +90,35 @@ public class ZoneController {
         } else {
             response.put("code", 404);
             response.put("message", "해당 조건의 기초구역이 존재하지 않습니다.");
+        }
+        System.out.println("전체 api 수행시간: " + (System.currentTimeMillis() - time) / 1000 + "초");
+        return response;
+    }
+
+    @ResponseBody
+    @GetMapping("/address/toLocation")
+    public HashMap<String, Object> convertAddressToLocation(
+            @ApiParam(value = "ADDRESS", required = true, example = "서울특별시 강남구 역삼동 테헤란로48길 10")
+            @RequestParam String address
+    ) {
+        long time = System.currentTimeMillis();
+
+        HashMap<String, Object> response = new HashMap<>();
+
+        //         주소->좌표 변환
+        HashMap<String, String> location = kakaoAPI.convertAddressToLocation(address);
+        Double x = Double.parseDouble(location.get("x"));
+        Double y = Double.parseDouble(location.get("y"));
+        LocationVo locationVo = new LocationVo(x, y);
+
+        if (locationVo.getY() > 0 && locationVo.getX() > 0) {
+            response.put("code", 200);
+            response.put("message", "정상");
+            response.put("data", locationVo);
+
+        } else {
+            response.put("code", 404);
+            response.put("message", "해당 주소의 좌표가 존재하지 않습니다.");
         }
         System.out.println("전체 api 수행시간: " + (System.currentTimeMillis() - time) / 1000 + "초");
         return response;
