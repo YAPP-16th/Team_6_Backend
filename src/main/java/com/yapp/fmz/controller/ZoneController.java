@@ -95,6 +95,7 @@ public class ZoneController {
         return response;
     }
 
+    @CrossOrigin("*")
     @ResponseBody
     @GetMapping("/address/toLocation")
     public HashMap<String, Object> convertAddressToLocation(
