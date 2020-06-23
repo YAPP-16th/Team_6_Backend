@@ -21,7 +21,7 @@ public interface ZoneRepository extends JpaRepository<Zone, Long>, ZoneRepositor
     @Query(value = "SELECT distinct z from Zone z join fetch z.rooms Where size(z.rooms) >=1")
     public List<Zone> findZonesHasRoomV3();
 
-    @Query(value = "SELECT distinct z from Zone z join fetch z.rooms Where z.id = 6174 or z.id = 6320")
+    @Query(value = "SELECT distinct z from Zone z join fetch z.rooms Where z.id = 227 or z.id = 268 or z.id = 248")
     public List<Zone> findTestZonesHasRoom();
 
     @Query(value = "Select distinct z from Zone z join fetch z.rooms ")
