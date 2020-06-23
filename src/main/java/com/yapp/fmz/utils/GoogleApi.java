@@ -56,6 +56,7 @@ public class GoogleApi {
                     .queryParam("origins", URLEncoder.encode(recommendListString))
                     .queryParam("destinations", inputLocation.getY().toString() + ',' + inputLocation.getX().toString())
                     .queryParam("mode", "transit")
+                    .queryParam("transit_routing_preference", "fewer_transfers")
                     .queryParam("transit_mode", URLEncoder.encode(makeModeParameter(transitMode)))
                     .queryParam("language", "ko")
                     .queryParam("key", auth);
@@ -111,7 +112,7 @@ public class GoogleApi {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return CompletableFuture.completedFuture(new ArrayList<Zone>(locations));
+        return CompletableFuture.completedFuture(new ArrayList<>(locations));
     }
 
     @Async
@@ -234,6 +235,7 @@ public class GoogleApi {
                 .queryParam("origin", origin)
                 .queryParam("destination", destination)
                 .queryParam("mode", "transit")
+                .queryParam("transit_routing_preference", "fewer_transfers")
                 .queryParam("departure_time", time )
                 .queryParam("language", "ko")
                 .queryParam("alternatives", "true")

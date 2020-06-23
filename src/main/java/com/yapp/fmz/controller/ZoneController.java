@@ -80,8 +80,11 @@ public class ZoneController {
 
         List<Zone> zones = zoneService.findZones(locationVo, addressTag, transitMode, transferLimit, minTime - 2, maxTime + 2);
         List<ZoneDto> data = zones.stream().map(ZoneDto::new).sorted().collect(toList());
+        if(data.size() > 10){
+            data = data.subList(0,10);
+        }
 
-        if (data.size() > 0) {
+        if(data.size() > 0) {
             response.put("code", 200);
             response.put("message", "정상");
             response.put("inputLocation", locationVo);
