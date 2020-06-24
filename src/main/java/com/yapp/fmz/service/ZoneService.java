@@ -341,9 +341,9 @@ public class ZoneService implements CommandLineRunner {
         List<CategoryVo> categoryVoList = new ArrayList<>();
         Optional<Zone> zone = zoneRepository.findById(zoneId);
         if (zone.isPresent()) {
-            HashMap<String, String> location = kakaoAPI.convertAddressToLocation(zone.get().getAddress().getAddress());
-            Double x = Double.parseDouble(location.get("x"));
-            Double y = Double.parseDouble(location.get("y"));
+//            HashMap<String, String> location = kakaoAPI.convertAddressToLocation(zone.get().getAddress().getAddress());
+            Double x = zone.get().getX();
+            Double y = zone.get().getY();
             LocationVo parsedLocation = new LocationVo(x, y);
             for (Category category : Category.values()) {
 //                System.out.println(category.toString());
